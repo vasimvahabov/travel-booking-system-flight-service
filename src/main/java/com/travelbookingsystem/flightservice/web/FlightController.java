@@ -2,6 +2,7 @@ package com.travelbookingsystem.flightservice.web;
 
 import com.travelbookingsystem.flightservice.domain.Flight;
 import com.travelbookingsystem.flightservice.domain.FlightService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,12 +30,12 @@ public class FlightController {
     }
 
     @PostMapping
-    public ResponseEntity<Flight> create(@RequestBody Flight flight) {
+    public ResponseEntity<Flight> create(@RequestBody @Valid Flight flight) {
         return ResponseEntity.status(HttpStatus.CREATED).body(flightService.create(flight));
     }
 
     @PutMapping
-    public ResponseEntity<Flight> update(@RequestBody Flight flight) {
+    public ResponseEntity<Flight> update(@RequestBody @Valid Flight flight) {
         return ResponseEntity.ok(flightService.update(flight));
     }
 
