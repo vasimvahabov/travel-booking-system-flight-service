@@ -46,4 +46,8 @@ public class Flight {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime departureDateTime;
 
+    @NotNull(message = "The flight price cannot be null!")
+    @Positive(message = "The flight price cannot be negative!")
+    BigDecimal price;
+
 }
