@@ -42,7 +42,7 @@ public class FlightService {
                     f.setDepartureDateTime(flight.getDepartureDateTime());
                     f.setArrivalDateTime(flight.getArrivalDateTime());
                     return flightRepository.save(f);
-                }).orElseGet(() -> flightRepository.save(flight))
+                }).orElseGet(() -> flightRepository.save(flight));
     }
 
     public void deleteByNumber(String number) {
