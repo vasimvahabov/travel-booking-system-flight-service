@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: travel-booking-system
+
+server:
+  port: 8899
+  tomcat:
+    connection-timeout: 2s
+    keep-alive-timeout: 15s
+    threads:
+      min-spare: 5
+      max: 50
