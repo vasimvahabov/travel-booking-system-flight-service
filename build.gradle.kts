@@ -34,6 +34,10 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	/*Spring Boot*/
 
+	/* Java Bean Validation API */
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	/* Java Bean Validation API */
+
 }
 
 tasks.withType<Test> {
