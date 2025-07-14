@@ -22,7 +22,7 @@ public class FlightService {
                 .orElseThrow(() -> new FlightNotFoundException(number));
     }
 
-    public Boolean existsByNumber(String number) {
+    public boolean existsByNumber(String number) {
         return flightRepository.existsByNumber(number);
     }
 
@@ -41,6 +41,7 @@ public class FlightService {
                     f.setArrivalAirportCode(flight.getArrivalAirportCode());
                     f.setDepartureDateTime(flight.getDepartureDateTime());
                     f.setArrivalDateTime(flight.getArrivalDateTime());
+                    f.setPrice(flight.getPrice());
                     return flightRepository.save(f);
                 }).orElseGet(() -> flightRepository.save(flight));
     }
