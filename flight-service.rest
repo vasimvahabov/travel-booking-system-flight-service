@@ -1,0 +1,56 @@
+### create a flight
+POST localhost:8899/flights
+Content-Type: application/json
+
+{
+
+    "airplaneId" : 1,
+
+    "number" : "AA144",
+
+    "departureAirportCode" : "DUB",
+
+    "arrivalAirportCode" : "FRA",
+
+    "departureDateTime" : "2025-07-15 00:12",
+
+    "arrivalDateTime" : "2025-07-15 05:00",
+
+    "price" : 15.99
+
+}
+###
+
+## find all flights
+GET localhost:8899/flights
+###
+
+## find flight by number
+GET localhost:8899/flights/aa144
+####
+
+## update flight
+PUT localhost:8899/flights
+Content-Type: application/json
+
+{
+
+    "airplaneId" : 2,
+
+    "number" : "aa133",
+
+    "departureAirportCode" : "aa",
+
+    "arrivalAirportCode" : "cc",
+
+    "departureDateTime" : "2025-07-15 00:44",
+
+    "arrivalDateTime" : "2025-07-15 05:44",
+
+    "price" : 10.99
+
+}
+###
+
+## delete flight by number
+DELETE localhost:8899/flights/aa133
