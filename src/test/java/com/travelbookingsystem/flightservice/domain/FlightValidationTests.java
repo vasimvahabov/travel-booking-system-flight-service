@@ -1,6 +1,5 @@
-package com.travelbookingsystem.flightservice;
+package com.travelbookingsystem.flightservice.domain;
 
-import com.travelbookingsystem.flightservice.domain.Flight;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -18,6 +17,8 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 class FlightValidationTests {
 
     private static Validator validator;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+
 
     @BeforeAll
     static void setUp() {
@@ -28,14 +29,13 @@ class FlightValidationTests {
 
     @Test
     void whenAllFieldsValidThenValidationSucceeds() {
-        var formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
         Flight flight = Flight.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
+                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", FORMATTER))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
                 .price(BigDecimal.valueOf(15.99)).build();
         Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
         Assertions.assertThat(violations).isEmpty();
@@ -43,13 +43,12 @@ class FlightValidationTests {
 
     @Test
     void whenDepartureDateTimeNullThenValidationFails() {
-        var formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
         Flight flight = Flight.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
                 .price(BigDecimal.valueOf(15.99)).build();
         Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
         Assertions.assertThat("The departure date time cannot be blank!".equals(violations.iterator().next().getMessage())).isEqualTo(Boolean.TRUE);
