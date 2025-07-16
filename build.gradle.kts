@@ -18,26 +18,24 @@ repositories {
 	mavenCentral()
 }
 
+val lombokVersion = "1.18.38"
+
+
 dependencies {
 
-	/* Lombok */
-	compileOnly("org.projectlombok:lombok:1.18.38")
-	annotationProcessor("org.projectlombok:lombok:1.18.38")
-
-	testCompileOnly("org.projectlombok:lombok:1.18.38")
-	testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
-	/* Lombok */
-
-	/*Spring Boot*/
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	compileOnly("org.projectlombok:lombok:$lombokVersion")
+
+	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	/*Spring Boot*/
 
-	/* Java Bean Validation API */
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	/* Java Bean Validation API */
+	testCompileOnly("org.projectlombok:lombok:$lombokVersion")
 
+	testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
 }
 
 tasks.withType<Test> {
