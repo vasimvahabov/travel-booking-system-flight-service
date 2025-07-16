@@ -7,6 +7,8 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static com.travelbookingsystem.flightservice.config.ApplicationConstants.*;
+
 @Getter
 @Setter
 @Builder
@@ -39,13 +41,13 @@ public class Flight {
     @NotBlank(message = "The arrival airport code title cannot be blank!")
     String arrivalAirportCode;
 
-    @NotNull(message = "The arrival date time cannot be blank!")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime arrivalDateTime;
-
     @NotNull(message = "The departure date time cannot be blank!")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
     LocalDateTime departureDateTime;
+
+    @NotNull(message = "The arrival date time cannot be blank!")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
+    LocalDateTime arrivalDateTime;
 
     @NotNull(message = "The flight price cannot be null!")
     @Positive(message = "The flight price cannot be negative!")
