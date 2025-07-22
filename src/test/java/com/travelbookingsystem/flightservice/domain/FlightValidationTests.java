@@ -19,7 +19,6 @@ class FlightValidationTests {
     private static Validator validator;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
-
     @BeforeAll
     static void setUp() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
@@ -51,6 +50,7 @@ class FlightValidationTests {
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
                 .price(BigDecimal.valueOf(15.99)).build();
         Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
+        Assertions.assertThat(violations).hasSize(1);
         Assertions.assertThat("The departure date time cannot be blank!".equals(violations.iterator().next().getMessage())).isEqualTo(Boolean.TRUE);
     }
 
