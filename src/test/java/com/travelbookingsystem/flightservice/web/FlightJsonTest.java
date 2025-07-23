@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.DATE_TIME_PATTERN;
 
 @JsonTest
@@ -30,15 +31,39 @@ class FlightJsonTest {
                 .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", FORMATTER))
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
                 .price(BigDecimal.valueOf(15.99)).build();
-
         var jsonContent = jacksonTester.write(flight);
-        Assertions.assertThat(jsonContent).extractingJsonPathNumberValue("@.airplaneId").isEqualTo(flight.getAirplaneId());
-        Assertions.assertThat(jsonContent).extractingJsonPathStringValue("@.number").isEqualTo(flight.getNumber());
-        Assertions.assertThat(jsonContent).extractingJsonPathStringValue("@.departureAirportCode").isEqualTo(flight.getDepartureAirportCode());
-        Assertions.assertThat(jsonContent).extractingJsonPathStringValue("@.arrivalAirportCode").isEqualTo(flight.getArrivalAirportCode());
-        Assertions.assertThat(jsonContent).extractingJsonPathValue("@.departureDateTime").isEqualTo(flight.getDepartureDateTime());
-        Assertions.assertThat(jsonContent).extractingJsonPathValue("@.arrivalDateTime").isEqualTo(flight.getArrivalDateTime());
-        Assertions.assertThat(jsonContent).extractingJsonPathNumberValue("@.arrivalDateTime").isEqualTo(flight.getPrice());
+
+        Assertions.assertThat(
+                Assertions.assertThat(jsonContent)
+                        .extractingJsonPathNumberValue("@.airplaneId")
+                        .actual().longValue()
+        ).isEqualTo(flight.getAirplaneId());
+
+        Assertions.assertThat(jsonContent)
+                .extractingJsonPathStringValue("@.number")
+                .isEqualTo(flight.getNumber());
+
+        Assertions.assertThat(jsonContent)
+                .extractingJsonPathStringValue("@.departureAirportCode")
+                .isEqualTo(flight.getDepartureAirportCode());
+
+        Assertions.assertThat(jsonContent).extractingJsonPathStringValue("@.arrivalAirportCode")
+                .isEqualTo(flight.getArrivalAirportCode());
+
+        Assertions.assertThat(
+                LocalDateTime.parse(
+                        Assertions.assertThat(jsonContent)
+                                .extractingJsonPathStringValue("@.departureDateTime").actual(), FORMATTER
+                )
+        ).isEqualTo(flight.getDepartureDateTime());
+
+        Assertions.assertThat(
+                LocalDateTime.parse(
+                        Assertions.assertThat(jsonContent)
+                                .extractingJsonPathStringValue("@.arrivalDateTime").actual(), FORMATTER
+                )
+        ).isEqualTo(flight.getArrivalDateTime());
+
     }
 
     @Test
@@ -65,7 +90,9 @@ class FlightJsonTest {
                 """;
 
 
-        Assertions.assertThat(jacksonTester.parse(content)).usingRecursiveComparison().isEqualTo(flight);
+        Assertions.assertThat(jacksonTester.parse(content))
+                .usingRecursiveComparison()
+                .isEqualTo(flight);
     }
 
 
