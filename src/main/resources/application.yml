@@ -2,7 +2,7 @@ spring:
   application:
     name: Flight Service
     version: 0.0.1-SNAPSHOT
-    test-data-enabled: true
+    test-data-enabled: false
 
 server:
   port: 8899
