@@ -9,7 +9,6 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		// languageVersion = JavaLanguageVersion.of(21)
 		languageVersion = JavaLanguageVersion.of(24)
 	}
 }
@@ -20,7 +19,6 @@ repositories {
 
 val lombokVersion = "1.18.38"
 
-
 dependencies {
 
 	implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -29,6 +27,7 @@ dependencies {
 	compileOnly("org.projectlombok:lombok:$lombokVersion")
 
 	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
