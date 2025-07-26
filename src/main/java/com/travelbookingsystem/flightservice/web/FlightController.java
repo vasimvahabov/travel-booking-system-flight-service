@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/flights")
+@RequestMapping("/v1/flights")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FlightController {
 

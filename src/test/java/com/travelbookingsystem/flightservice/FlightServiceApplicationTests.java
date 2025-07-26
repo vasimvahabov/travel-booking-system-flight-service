@@ -33,7 +33,7 @@ class FlightServiceApplicationTests {
 				.arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
 				.price(BigDecimal.valueOf(15.99)).build();
 		webTestClient.post()
-		.uri("/flights")
+		.uri("/v1/flights")
 				.bodyValue(flight)
 				.exchange()
 				.expectStatus().isCreated()

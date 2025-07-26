@@ -1,5 +1,5 @@
 ### create a flight
-POST localhost:8899/flights
+POST localhost:8899/v1/flights
 Content-Type: application/json
 
 {
@@ -22,15 +22,15 @@ Content-Type: application/json
 ###
 
 ## find all flights
-GET localhost:8899/flights
+GET localhost:8899/v1/flights
 ###
 
 ## find flight by number
-GET localhost:8899/flights/aa144
+GET localhost:8899/v1/flights/aa144
 ####
 
 ## update flight
-PUT localhost:8899/flights
+PUT localhost:8899/v1/flights
 Content-Type: application/json
 
 {
@@ -53,4 +53,4 @@ Content-Type: application/json
 ###
 
 ## delete flight by number
-DELETE localhost:8899/flights/aa133
+DELETE localhost:8899/v1/flights/aa133
