@@ -17,7 +17,7 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 class FlightValidationTests {
 
     private static Validator validator;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     @BeforeAll
     static void setUp() {
@@ -33,8 +33,8 @@ class FlightValidationTests {
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", FORMATTER))
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
+                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
         Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
         Assertions.assertThat(violations).isEmpty();
@@ -47,7 +47,7 @@ class FlightValidationTests {
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
         Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
         Assertions.assertThat(violations).hasSize(1);

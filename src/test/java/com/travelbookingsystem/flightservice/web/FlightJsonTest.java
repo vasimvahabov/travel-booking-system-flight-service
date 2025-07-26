@@ -16,7 +16,7 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 @JsonTest
 class FlightJsonTest {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     @Autowired
     private JacksonTester<Flight> jacksonTester;
@@ -28,8 +28,8 @@ class FlightJsonTest {
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", FORMATTER))
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
+                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
         var jsonContent = jacksonTester.write(flight);
 
@@ -53,14 +53,14 @@ class FlightJsonTest {
         Assertions.assertThat(
                 LocalDateTime.parse(
                         Assertions.assertThat(jsonContent)
-                                .extractingJsonPathStringValue("@.departureDateTime").actual(), FORMATTER
+                                .extractingJsonPathStringValue("@.departureDateTime").actual(), formatter
                 )
         ).isEqualTo(flight.getDepartureDateTime());
 
         Assertions.assertThat(
                 LocalDateTime.parse(
                         Assertions.assertThat(jsonContent)
-                                .extractingJsonPathStringValue("@.arrivalDateTime").actual(), FORMATTER
+                                .extractingJsonPathStringValue("@.arrivalDateTime").actual(), formatter
                 )
         ).isEqualTo(flight.getArrivalDateTime());
 
@@ -73,8 +73,8 @@ class FlightJsonTest {
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
-                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", FORMATTER))
-                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", FORMATTER))
+                .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
+                .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
 
         var content = """
