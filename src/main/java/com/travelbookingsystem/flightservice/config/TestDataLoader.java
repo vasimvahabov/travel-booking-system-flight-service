@@ -5,8 +5,8 @@ import com.travelbookingsystem.flightservice.domain.FlightRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
@@ -16,7 +16,8 @@ import java.time.format.DateTimeFormatter;
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.DATE_TIME_PATTERN;
 
 @Component
-@Profile("test-data")
+//@Profile("test-data")
+@ConditionalOnProperty(name = "spring.application.test-data-enabled", havingValue = "true")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TestDataLoader {

@@ -39,9 +39,9 @@ dependencies {
 	testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
 }
 
-tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
-	systemProperty("spring.profiles.active", "test-data")
-}
+//tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+//	systemProperty("spring.profiles.active", "test-data")
+//}
 
 tasks.withType<Test> {
 	useJUnitPlatform()
