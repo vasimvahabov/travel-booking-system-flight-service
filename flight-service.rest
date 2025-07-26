@@ -54,3 +54,8 @@ Content-Type: application/json
 
 ## delete flight by number
 DELETE localhost:8899/api/v1/flights/aa133
+
+###
+
+## request app info
+GET localhost:8899/api/v1/app/info
