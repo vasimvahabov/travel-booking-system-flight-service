@@ -24,7 +24,7 @@ class FlightControllerMvcTests {
     void whenFlightNotExistsThenReturnNotFound() throws Exception {
         final var flightNumber = "AA144";
         BDDMockito.given(flightService.findByNumber(flightNumber)).willThrow(FlightNotFoundException.class);
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/flights/%s".formatted(flightNumber)))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/flights/%s".formatted(flightNumber)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
