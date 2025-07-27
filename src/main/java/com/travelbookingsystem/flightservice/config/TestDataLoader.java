@@ -17,7 +17,7 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 
 @Component
 //@Profile("test-data")
-@ConditionalOnProperty(name = "spring.application.test-data-enabled", havingValue = "true")
+@ConditionalOnProperty(name = "application.test-data-enabled", havingValue = "true")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TestDataLoader {

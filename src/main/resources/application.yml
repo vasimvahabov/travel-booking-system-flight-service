@@ -1,8 +1,16 @@
 spring:
   application:
-    name: Flight Service
-    version: 0.0.1-SNAPSHOT
-    test-data-enabled: false
+    name: flight-service
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      uri: http://localhost:6464
+
+application:
+  name: Flight Service
+  version: 0.0.1-SNAPSHOT
+  environment: Local
 
 server:
   port: 8899

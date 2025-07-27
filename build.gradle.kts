@@ -18,11 +18,13 @@ repositories {
 }
 
 val lombokVersion = "1.18.38"
+val springCloudVersion = "2025.0.0";
 
 dependencies {
 
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.cloud:spring-cloud-starter-config")
 
 	compileOnly("org.projectlombok:lombok:$lombokVersion")
 
@@ -37,6 +39,12 @@ dependencies {
 	testCompileOnly("org.projectlombok:lombok:$lombokVersion")
 
 	testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+	}
 }
 
 //tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {

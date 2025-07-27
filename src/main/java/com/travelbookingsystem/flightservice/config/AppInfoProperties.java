@@ -1,17 +1,22 @@
 package com.travelbookingsystem.flightservice.config;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Setter
 @Getter
 //@EnableConfigurationProperties(FlightServiceProperties.class)
-@ConfigurationProperties(prefix = "spring.application")
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@ConfigurationProperties(prefix = "application")
 public class AppInfoProperties {
 
-    private String name;
+    String name;
 
-    private String version;
+    String version;
+
+    String environment;
 
 }
