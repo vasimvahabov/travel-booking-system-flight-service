@@ -19,7 +19,7 @@ public class AppInfoController {
 
     @GetMapping("/info")
     public ResponseEntity<String> info() {
-        return ResponseEntity.ok(String.format("%s %s", appInfoProperties.getName(), appInfoProperties.getVersion()));
+        return ResponseEntity.ok(String.format("%s %s in %s environment", appInfoProperties.getName(), appInfoProperties.getVersion(), appInfoProperties.getEnvironment()));
     }
 
 }
