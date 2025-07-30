@@ -19,6 +19,12 @@ spring:
 application:
   environment: Local
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
 server:
   port: 8899
   tomcat:
