@@ -1,5 +1,6 @@
 package com.travelbookingsystem.flightservice.domain;
 
+import com.travelbookingsystem.flightservice.entities.Flight;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

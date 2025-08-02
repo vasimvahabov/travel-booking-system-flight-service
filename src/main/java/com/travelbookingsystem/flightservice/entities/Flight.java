@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.domain;
+package com.travelbookingsystem.flightservice.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;

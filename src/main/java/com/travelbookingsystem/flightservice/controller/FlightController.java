@@ -1,7 +1,7 @@
-package com.travelbookingsystem.flightservice.web;
+package com.travelbookingsystem.flightservice.controller;
 
-import com.travelbookingsystem.flightservice.domain.Flight;
-import com.travelbookingsystem.flightservice.domain.FlightService;
+import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.services.FlightService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

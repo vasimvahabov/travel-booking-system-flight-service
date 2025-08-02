@@ -1,8 +1,8 @@
-package com.travelbookingsystem.flightservice.web;
+package com.travelbookingsystem.flightservice.config;
 
-import com.travelbookingsystem.flightservice.domain.CustomExceptionMessage;
-import com.travelbookingsystem.flightservice.domain.FlightAlreadyExistsException;
-import com.travelbookingsystem.flightservice.domain.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.exceptions.CustomExceptionMessage;
+import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
+import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

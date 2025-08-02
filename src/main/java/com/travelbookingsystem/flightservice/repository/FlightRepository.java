@@ -1,4 +1,6 @@
-package com.travelbookingsystem.flightservice.domain;
+package com.travelbookingsystem.flightservice.repository;
+
+import com.travelbookingsystem.flightservice.entities.Flight;
 
 import java.util.List;
 import java.util.Optional;

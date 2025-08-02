@@ -1,6 +1,6 @@
 package com.travelbookingsystem.flightservice;
 
-import com.travelbookingsystem.flightservice.domain.Flight;
+import com.travelbookingsystem.flightservice.entities.Flight;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

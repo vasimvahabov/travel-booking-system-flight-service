@@ -1,5 +1,9 @@
-package com.travelbookingsystem.flightservice.domain;
+package com.travelbookingsystem.flightservice.services;
 
+import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
+import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.repository.FlightRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
