@@ -29,6 +29,7 @@ public class Flight {
     Long id;
 
     @Version
+    @Builder.Default
     @Column(name = "version")
     Integer version = 0;
 
