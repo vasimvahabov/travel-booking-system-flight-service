@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.web;
+package com.travelbookingsystem.flightservice.controllers;
 
 import com.travelbookingsystem.flightservice.entities.Flight;
 import org.assertj.core.api.Assertions;

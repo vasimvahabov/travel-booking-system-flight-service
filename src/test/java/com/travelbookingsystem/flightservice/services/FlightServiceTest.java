@@ -1,10 +1,9 @@
-package com.travelbookingsystem.flightservice.domain;
+package com.travelbookingsystem.flightservice.services;
 
 import com.travelbookingsystem.flightservice.entities.Flight;
 import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
 import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
-import com.travelbookingsystem.flightservice.services.FlightService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

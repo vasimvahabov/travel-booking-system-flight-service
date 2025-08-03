@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.web;
+package com.travelbookingsystem.flightservice.controllers;
 
 import com.travelbookingsystem.flightservice.controller.FlightController;
 import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
