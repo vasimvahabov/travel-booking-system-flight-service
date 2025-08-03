@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	// implementation 'org.springframework.retry:spring-retry'
 
 	compileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -40,6 +41,8 @@ dependencies {
 
 	testCompileOnly "org.projectlombok:lombok:$lombokVersion"
 	testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+	runtimeOnly 'org.postgresql:postgresql'
 }
 
 dependencyManagement {

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,10 +15,17 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 @Getter
 @Setter
 @Builder
+@Table("books")
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Flight {
+
+    @Id
+    Long id;
+
+    @Version
+    Integer version = 0;
 
     @NotNull(message = "The airplane id cannot be null!")
     Long airplaneId;

@@ -40,6 +40,8 @@ public class FlightService {
     public Flight update(Flight flight) {
         return flightRepository.findByNumber(flight.getNumber())
                 .map(f -> {
+                    f.setId(flight.getId());
+                    f.setVersion(flight.getVersion());
                     f.setAirplaneId(flight.getAirplaneId());
                     f.setDepartureAirportCode(flight.getDepartureAirportCode());
                     f.setArrivalAirportCode(flight.getArrivalAirportCode());
