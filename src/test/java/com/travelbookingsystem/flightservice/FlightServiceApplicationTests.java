@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,9 +20,10 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FlightServiceApplicationTests {
 
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+	final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
 	@Autowired
     WebTestClient webTestClient;

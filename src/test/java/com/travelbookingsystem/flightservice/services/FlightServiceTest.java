@@ -5,6 +5,8 @@ import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsExcep
 import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
 import com.travelbookingsystem.flightservice.mapper.FlightMapper;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,18 +22,19 @@ import java.util.Optional;
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.DATE_TIME_PATTERN;
 
 @ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class FlightServiceTest {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     @Mock
-    private FlightRepository flightRepository;
+    FlightRepository flightRepository;
 
     @Mock
-    private FlightMapper flightMapper;
+    FlightMapper flightMapper;
 
     @InjectMocks
-    private FlightService flightService;
+    FlightService flightService;
 
     @Test
     void whenFlightAlreadyExistsThenThrowsFlightAlreadyExistsException() {

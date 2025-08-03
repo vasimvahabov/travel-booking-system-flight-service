@@ -1,7 +1,8 @@
 package com.travelbookingsystem.flightservice.controllers;
 
 import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
-import com.travelbookingsystem.flightservice.dtos.response.FlightResponse;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,13 @@ import java.time.format.DateTimeFormatter;
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.DATE_TIME_PATTERN;
 
 @JsonTest
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class FlightJsonTest {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     @Autowired
-    private JacksonTester<FlightRequest> jacksonTester;
+    JacksonTester<FlightRequest> jacksonTester;
 
     @Test
     void testSerialization() throws IOException {

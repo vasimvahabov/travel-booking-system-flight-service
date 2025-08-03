@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,10 +17,11 @@ import java.util.Set;
 
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.*;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class FlightValidationTests {
 
-    private static Validator validator;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    static Validator validator;
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     @BeforeAll
     static void setUp() {
