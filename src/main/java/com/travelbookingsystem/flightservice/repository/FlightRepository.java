@@ -1,19 +1,14 @@
 package com.travelbookingsystem.flightservice.repository;
 
 import com.travelbookingsystem.flightservice.entities.Flight;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-public interface FlightRepository {
-
-    List<Flight> findAll();
+public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     Optional<Flight> findByNumber(String number);
 
     boolean existsByNumber(String number);
-
-    Flight save(Flight flight);
 
     void deleteByNumber(String number);
 

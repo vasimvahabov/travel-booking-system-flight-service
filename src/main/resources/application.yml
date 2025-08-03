@@ -15,6 +15,16 @@ spring:
         initial-interval: 1000
         max-interval: 2000
         multiplier: 1.1
+  datasource:
+    username: user_postgres
+    password: 6eEvI63t20
+    url: jdbc:postgresql://localhost:5432/flights
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 2000
+  sql:
+    init:
+      mode: always
 
 application:
   environment: Local
