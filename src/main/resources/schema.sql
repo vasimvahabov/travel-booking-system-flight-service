@@ -1,11 +1,20 @@
+DROP SEQUENCE IF EXISTS seq_flight_id;
+
+CREATE SEQUENCE seq_flight_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 DROP TABLE IF EXISTS flights;
 CREATE TABLE flights (
 
-    id BIGSERIAL PRIMARY KEY NOT NULL,
+    id BIGINT PRIMARY KEY NOT NULL,
 
     version INTEGER NOT NULL,
 
-    airplaneId BIGSERIAL NOT NULL,
+    airplane_id BIGINT NOT NULL,
 
     number VARCHAR(255) UNIQUE NOT NULL,
 
