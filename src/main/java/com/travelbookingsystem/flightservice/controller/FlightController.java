@@ -1,5 +1,7 @@
 package com.travelbookingsystem.flightservice.controller;
 
+import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dtos.response.FlightResponse;
 import com.travelbookingsystem.flightservice.entities.Flight;
 import com.travelbookingsystem.flightservice.services.FlightService;
 import jakarta.validation.Valid;
@@ -20,27 +22,27 @@ public class FlightController {
     FlightService flightService;
 
     @GetMapping
-    public ResponseEntity<List<Flight>> findAll() {
+    public ResponseEntity<List<FlightResponse>> findAll() {
         return ResponseEntity.ok(flightService.findAll());
     }
 
     @GetMapping("{number}")
-    public ResponseEntity<Flight> findByNumber(@PathVariable String number) {
+    public ResponseEntity<FlightResponse> findByNumber(@PathVariable String number) {
         return ResponseEntity.ok(flightService.findByNumber(number));
     }
 
     @PostMapping
-    public ResponseEntity<Flight> create(@RequestBody @Valid Flight flight) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(flightService.create(flight));
+    public ResponseEntity<FlightResponse> create(@RequestBody @Valid FlightRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(flightService.create(request));
     }
 
     @PutMapping
-    public ResponseEntity<Flight> update(@RequestBody @Valid Flight flight) {
-        return ResponseEntity.ok(flightService.update(flight));
+    public ResponseEntity<FlightResponse> update(@RequestBody @Valid FlightRequest request) {
+        return ResponseEntity.ok(flightService.update(request));
     }
 
     @DeleteMapping("{number}")
-    public ResponseEntity<Flight> deleteByNumber(@PathVariable String number) {
+    public ResponseEntity<Void> deleteByNumber(@PathVariable String number) {
         flightService.deleteByNumber(number);
         return ResponseEntity.noContent().build();
     }

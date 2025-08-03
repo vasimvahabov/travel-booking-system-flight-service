@@ -1,13 +1,16 @@
 package com.travelbookingsystem.flightservice.services;
 
-import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dtos.response.FlightResponse;
 import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
 import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.mapper.FlightMapper;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -16,13 +19,15 @@ import java.util.List;
 public class FlightService {
 
     FlightRepository flightRepository;
+    FlightMapper flightMapper;
 
-    public List<Flight> findAll() {
-        return flightRepository.findAll();
+    public List<FlightResponse> findAll() {
+        return flightRepository.findAll().stream().map(flightMapper::entityToResponse).toList();
     }
 
-    public Flight findByNumber(String number) {
+    public FlightResponse findByNumber(String number) {
         return flightRepository.findByNumber(number)
+                .map(flightMapper::entityToResponse)
                 .orElseThrow(() -> new FlightNotFoundException(number));
     }
 
@@ -30,26 +35,20 @@ public class FlightService {
         return flightRepository.existsByNumber(number);
     }
 
-    public Flight create(Flight flight) {
-        if(existsByNumber(flight.getNumber())) {
-            throw new FlightAlreadyExistsException(flight.getNumber());
+    public FlightResponse create(FlightRequest request) {
+        if (existsByNumber(request.getNumber())) {
+            throw new FlightAlreadyExistsException(request.getNumber());
         }
-        return flightRepository.save(flight);
+        return flightMapper.entityToResponse(flightRepository.save(flightMapper.requestToEntity(request)));
     }
 
-    public Flight update(Flight flight) {
-        return flightRepository.findByNumber(flight.getNumber())
-                .map(f -> {
-                    f.setId(flight.getId());
-                    f.setVersion(flight.getVersion());
-                    f.setAirplaneId(flight.getAirplaneId());
-                    f.setDepartureAirportCode(flight.getDepartureAirportCode());
-                    f.setArrivalAirportCode(flight.getArrivalAirportCode());
-                    f.setDepartureDateTime(flight.getDepartureDateTime());
-                    f.setArrivalDateTime(flight.getArrivalDateTime());
-                    f.setPrice(flight.getPrice());
-                    return flightRepository.save(f);
-                }).orElseGet(() -> flightRepository.save(flight));
+    public FlightResponse update(FlightRequest request) {
+        return flightRepository.findByNumber(request.getNumber())
+                .map(flight -> flightMapper.updateEntityFromRequest(request, flight))
+                .map(flightMapper::entityToResponse)
+                .orElseGet(() -> flightMapper.entityToResponse(
+                        flightRepository.save(flightMapper.requestToEntity(request))
+                ));
     }
 
     public void deleteByNumber(String number) {
