@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -40,7 +39,7 @@ class FlightJsonTest {
 
             var actualAirplaneId = Assertions.assertThat(jsonContent)
                     .extractingJsonPathNumberValue("@.airplaneId").actual();
-            Assertions.assertThat(actualAirplaneId).isEqualTo(request.getAirplaneId());
+            Assertions.assertThat(actualAirplaneId.longValue()).isEqualTo(request.getAirplaneId());
 
 
             Assertions.assertThat(jsonContent).extractingJsonPathStringValue("@.number")
@@ -68,7 +67,7 @@ class FlightJsonTest {
 
     @Test
     void testDeserialization() throws IOException {
-        var response = FlightResponse.builder()
+        var request = FlightRequest.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
@@ -92,8 +91,8 @@ class FlightJsonTest {
 
         Assertions.assertThat(jacksonTester.parse(content))
                 .usingRecursiveComparison()
-                .isEqualTo(response);
-    }
+                .isEqualTo(request);
 
+    }
 
 }

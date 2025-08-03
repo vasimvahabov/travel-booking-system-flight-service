@@ -1,5 +1,6 @@
 package com.travelbookingsystem.flightservice.entities;
 
+import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -28,7 +29,7 @@ class FlightValidationTests {
 
     @Test
     void whenAllFieldsValidThenValidationSucceeds() {
-        Flight flight = Flight.builder()
+        var request = FlightRequest.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
@@ -36,20 +37,20 @@ class FlightValidationTests {
                 .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
-        Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
+        Set<ConstraintViolation<FlightRequest>> violations = validator.validate(request);
         Assertions.assertThat(violations).isEmpty();
     }
 
     @Test
     void whenDepartureDateTimeNullThenValidationFails() {
-        Flight flight = Flight.builder()
+        var request = FlightRequest.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
                 .arrivalAirportCode("FRA")
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
-        Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
+        Set<ConstraintViolation<FlightRequest>> violations = validator.validate(request);
         Assertions.assertThat(violations).hasSize(1);
         Assertions.assertThat("The departure date time cannot be blank!".equals(violations.iterator().next().getMessage())).isEqualTo(Boolean.TRUE);
     }

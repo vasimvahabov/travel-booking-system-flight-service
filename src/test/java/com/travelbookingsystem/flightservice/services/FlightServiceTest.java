@@ -1,8 +1,9 @@
 package com.travelbookingsystem.flightservice.services;
 
-import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
 import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
 import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.mapper.FlightMapper;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,16 +24,18 @@ class FlightServiceTest {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
-
     @Mock
     private FlightRepository flightRepository;
+
+    @Mock
+    private FlightMapper flightMapper;
 
     @InjectMocks
     private FlightService flightService;
 
     @Test
     void whenFlightAlreadyExistsThenThrowsFlightAlreadyExistsException() {
-        var flight = Flight.builder()
+        var request = FlightRequest.builder()
                 .airplaneId(1L)
                 .number("AA144")
                 .departureAirportCode("DUB")
@@ -41,10 +44,10 @@ class FlightServiceTest {
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
 
-        Mockito.when(flightRepository.existsByNumber(flight.getNumber())).thenReturn(true);
-        Assertions.assertThatThrownBy(() -> flightService.create(flight))
+        Mockito.when(flightRepository.existsByNumber(request.getNumber())).thenReturn(true);
+        Assertions.assertThatThrownBy(() -> flightService.create(request))
                 .isInstanceOf(FlightAlreadyExistsException.class)
-                .hasMessage("A flight with %s number already exists!!!".formatted(flight.getNumber()));
+                .hasMessage("A flight with %s number already exists!!!".formatted(request.getNumber()));
     }
 
     @Test

@@ -1,6 +1,9 @@
 package com.travelbookingsystem.flightservice;
 
+import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
 import com.travelbookingsystem.flightservice.entities.Flight;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +18,17 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class FlightServiceApplicationTests {
 
 	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
 	@Autowired
-    private WebTestClient webTestClient;
+    WebTestClient webTestClient;
 
     @Test
     void whenPostRequestThenFlightIsCreated() {
-		Flight flight = Flight.builder()
+		var request = FlightRequest.builder()
 				.airplaneId(1L)
 				.number("AA144")
 				.departureAirportCode("DUB")
@@ -34,13 +38,13 @@ class FlightServiceApplicationTests {
 				.price(BigDecimal.valueOf(15.99)).build();
 		webTestClient.post()
 		.uri("/api/v1/flights")
-				.bodyValue(flight)
+				.bodyValue(request)
 				.exchange()
 				.expectStatus().isCreated()
 				.expectBody(Flight.class)
 				.value(payload -> {
 					Assertions.assertThat(payload).isNotNull();
-					Assertions.assertThat(payload.getNumber()).isEqualTo(flight.getNumber());
+					Assertions.assertThat(payload.getNumber()).isEqualTo(request.getNumber());
 				});
     }
 

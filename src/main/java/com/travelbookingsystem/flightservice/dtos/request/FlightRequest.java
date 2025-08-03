@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.*;
@@ -53,16 +50,6 @@ public class FlightRequest {
     @NotNull(message = "The arrival date time cannot be blank!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
     LocalDateTime arrivalDateTime;
-
-    @CreatedDate
-    @Builder.Default
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = INSTANT_PATTERN)
-    Instant createdDateTime = Instant.now();
-
-    @Builder.Default
-    @LastModifiedDate
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = INSTANT_PATTERN)
-    Instant lastModifiedDateTime = Instant.now();
 
     @NotNull(message = "The flight price cannot be null!")
     @Positive(message = "The flight price cannot be negative!")

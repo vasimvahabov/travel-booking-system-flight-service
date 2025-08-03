@@ -22,7 +22,7 @@ import static com.travelbookingsystem.flightservice.config.ApplicationConstants.
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TestDataLoader {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
     FlightRepository flightRepository;
 
@@ -48,7 +48,6 @@ public class TestDataLoader {
 
         flightRepository.save(flight1);
         flightRepository.save(flight2);
-
 
     }
 
