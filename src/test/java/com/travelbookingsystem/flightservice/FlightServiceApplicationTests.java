@@ -16,9 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.DATE_TIME_PATTERN;
 
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@ActiveProfiles("integration")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FlightServiceApplicationTests {
