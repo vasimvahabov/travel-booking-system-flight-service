@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1754366403"
+      author: "VASIM VAHABOV"
+      preConditions:
+        - sequenceExits:
+            seq_flight_id
+      changes:
+        - dropSequence:
+            sequenceName: seq_flight_id
+  - changeSet:
+      id: "1691199944"
+      author: "VASIM VAHABOV"
+      changes:
+        - createSequence:
+            sequenceName: seq_flight_id
+            startValue: 1
+            incrementBy: 1
+            cacheSize: 1
+  - changeSet:
+      id: "1754366562"
+      author: "VASIM VAHABOV"
+      preConditions:
+        - tableExits:
+            flights
+      changes:
+        - dropTable:
+            tableName: flights
+  - changeSet:
+      id: "1754366641"
+      author: "VASIM VAHABOV"
+      changes:
+        - createTable:
+            tableName: flights
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_flights_id
+                    nullable: false
+              - column:
+                  name: version
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: airplane_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: number
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uk_flights_number
+                    nullable: false
+              - column:
+                  name: departure_airport_code
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: arrival_airport_code
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: departure_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: arrival_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric(5,2)
+                  constraints:
+                    nullable: false
