@@ -32,10 +32,10 @@ class FlightRepositoryJpaTests {
     @Test
     void findFlightByIdAfterInsert() {
         var flight = Flight.builder()
-                .airplaneId(1L)
-                .number("AA144")
-                .departureAirportCode("DUB")
-                .arrivalAirportCode("FRA")
+                .airplaneId(5L)
+                .number("BC544")
+                .departureAirportCode("PLN")
+                    .arrivalAirportCode("GYD")
                 .departureDateTime(LocalDateTime.parse("2025-07-15 00:12", formatter))
                 .arrivalDateTime(LocalDateTime.parse("2025-07-15 05:00", formatter))
                 .price(BigDecimal.valueOf(15.99)).build();
