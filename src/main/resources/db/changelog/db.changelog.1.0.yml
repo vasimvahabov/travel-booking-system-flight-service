@@ -3,8 +3,9 @@ databaseChangeLog:
       id: "1754366403"
       author: "VASIM VAHABOV"
       preConditions:
-        - sequenceExits:
-            seq_flight_id
+        - onFail: MARK_RAN
+        - sequenceExists:
+            sequenceName: seq_flight_id
       changes:
         - dropSequence:
             sequenceName: seq_flight_id
@@ -21,8 +22,10 @@ databaseChangeLog:
       id: "1754366562"
       author: "VASIM VAHABOV"
       preConditions:
-        - tableExits:
-            flights
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: flights
+
       changes:
         - dropTable:
             tableName: flights
