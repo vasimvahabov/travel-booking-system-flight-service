@@ -76,6 +76,10 @@ tasks.register('printParameters') {
     }
 }
 
+//bootRun {
+//    systemProperty 'application.test-data-enabled', 'true'
+//}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
