@@ -5,7 +5,6 @@ plugins {
 }
 
 group = 'com.travelbookingsystem'
-version = '0.1.0'
 
 java {
 	toolchain {
@@ -82,4 +81,23 @@ tasks.register('printParameters') {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootBuildImage {
+    builder = "docker.io/paketobuildpacks/builder-jammy-base"
+    version = project.findProperty("version")
+    imageName = project.findProperty("imageName") + ":" + version
+    publish = project.findProperty("publishImage")?.toBoolean() ?: false
+    environment = [
+            "BP_JVM_VERSION": JavaVersion.current().majorVersion
+    ]
+    verboseLogging = true
+
+    docker {
+        publishRegistry {
+            username = project.findProperty("registryUsername")
+            password = project.findProperty("registryToken")
+            url = project.findProperty("registryUrl")
+        }
+    }
 }
