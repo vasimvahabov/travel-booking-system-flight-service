@@ -19,6 +19,7 @@ spring:
     username: user_postgres
     password: 6eEvI63t20
     url: jdbc:postgresql://localhost:5432/flights
+#    url: jdbc:postgresql://postgres-flight-service:5432/flights
     hikari:
       maximum-pool-size: 5
       connection-timeout: 2000

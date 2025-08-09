@@ -1,5 +1,17 @@
 services:
   flight-service:
-    image: flight-service:0.0.1-SNAPSHOT
+    image: flight-service:0.1.0
+    pull_policy: missing
+    container_name: flight-service
+    build: .
     ports:
-      - "8080:8080"
+      - "8899:8899"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-flight-service:5432/flights
+#      APPLICATION_TEST_DATA_ENABLED: true
+    networks:
+      - flight-service-network
+
+networks:
+  flight-service-network:
+      external: true
