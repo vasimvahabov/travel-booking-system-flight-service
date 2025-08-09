@@ -63,9 +63,18 @@ dependencyManagement {
 	}
 }
 
-// tasks.named('bootRun') {
-//     systemProperty 'spring.profiles.active', 'test-data'
-//}
+tasks.register('printParameters') {
+    doLast {
+        if (!project.gradle.startParameter.projectProperties.isEmpty()) {
+            println "Passed -P parameters:"
+            project.gradle.startParameter.projectProperties.each { key, value ->
+                println "$key = $value"
+            }
+        } else {
+            println "No -P parameters passed..."
+        }
+    }
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
