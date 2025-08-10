@@ -4,7 +4,7 @@ on: push
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/vasimvahabov/flight-service
-  VERSION: 0.1.1
+  VERSION: 0.1.2
 
 jobs:
   build:
