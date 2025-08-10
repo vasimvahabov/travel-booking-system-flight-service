@@ -59,7 +59,7 @@ jobs:
       - name: Build the container image
         run: |
           chmod +x gradlew
-          ./gradlew printParameters bootBuildImage \
+          ./gradlew printParamete btBuildImage \
           --imageName ${{ env.IMAGE_NAME }} \
           --version ${{ env.VERSION }}
       - name: Scan OCI the image vulnerability
