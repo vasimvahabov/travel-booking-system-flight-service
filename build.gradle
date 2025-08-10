@@ -62,6 +62,10 @@ dependencyManagement {
 	}
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
 def checkPropertiesNotEmpty = { String task, def props ->
     if (props.isEmpty()) {
         throw new GradleException("task failed: No -P parameters passed...")
@@ -80,31 +84,12 @@ tasks.matching { it.name in ['jar', 'bootJar', 'build'] }.configureEach {
     }
 }
 
-tasks.named('bootBuildImage').configure {
-    doFirst {
-        checkPropertiesNotEmpty(name, project.gradle.startParameter.projectProperties)
-
-        def props = project.gradle.startParameter.projectProperties
-        checkProperty(name, 'version', props)
-        checkProperty(name, 'imageName', props)
-
-        if (project.findProperty("publishImage")?.toBoolean()) {
-            ['registryUsername', 'registryToken', 'registryUrl'].each { prop ->
-                checkProperty(name, prop, props)
-            }
-        }
-    }
-}
-
 //bootRun {
 //    systemProperty 'application.test-data-enabled', 'true'
 //}
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
-
 bootBuildImage {
+
     builder = "docker.io/paketobuildpacks/builder-jammy-base"
     version = project.findProperty("version")
     imageName = project.findProperty("imageName") + ":" + version
@@ -121,4 +106,5 @@ bootBuildImage {
             url = project.findProperty("registryUrl")
         }
     }
+
 }
