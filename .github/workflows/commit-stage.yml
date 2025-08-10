@@ -29,6 +29,14 @@ jobs:
           path: "${{ github.workspace }}"
           fail-build: true
           severity-cutoff: high
+      - name: Debug SARIF file
+        run: |
+          echo "SARIF file size:"
+          ls -l ./results.sarif
+          echo "SARIF content preview:"
+          head -n 20 ./results.sarif
+          echo "Validate JSON:"
+          jq . ./results.sarif
       - name: Upload the vulnerability report
         uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
