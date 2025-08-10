@@ -84,6 +84,22 @@ tasks.matching { it.name in ['jar', 'bootJar', 'build'] }.configureEach {
     }
 }
 
+tasks.named('bootBuildImage').configure {
+    doFirst {
+        checkPropertiesNotEmpty(name, project.gradle.startParameter.projectProperties)
+
+        def props = project.gradle.startParameter.projectProperties
+        checkProperty(name, 'version', props)
+        checkProperty(name, 'imageName', props)
+
+        if (project.findProperty("publishImage")?.toBoolean()) {
+            ['registryUsername', 'registryToken', 'registryUrl'].each { prop ->
+                checkProperty(name, prop, props)
+            }
+        }
+    }
+}
+
 //bootRun {
 //    systemProperty 'application.test-data-enabled', 'true'
 //}
