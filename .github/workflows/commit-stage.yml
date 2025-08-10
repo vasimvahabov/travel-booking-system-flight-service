@@ -60,8 +60,8 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew printParameters bootBuildImage \
-          -PimageName ${{ env.IMAGE_NAME }} \
-          -Pversion ${{ env.VERSION }}
+          -PimageName=${{ env.IMAGE_NAME }} \
+          -Pversion=${{ env.VERSION }}
       - name: Scan OCI the image vulnerability
         uses: anchore/scan-action@v4
         id: scan
