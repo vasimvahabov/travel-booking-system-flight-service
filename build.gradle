@@ -62,15 +62,36 @@ dependencyManagement {
 	}
 }
 
-tasks.register('printParameters') {
-    doLast {
-        if (!project.gradle.startParameter.projectProperties.isEmpty()) {
-            println "Passed -P parameters:"
-            project.gradle.startParameter.projectProperties.each { key, value ->
-                println "$key = $value"
+def checkPropertiesNotEmpty = { String task, def props ->
+    if (props.isEmpty()) {
+        throw new GradleException("task failed: No -P parameters passed...")
+    }
+}
+
+def checkProperty = { String task, String prop, def props ->
+    if(!props.containsKey(prop) || !project.property(prop).toString()) {
+        throw new GradleException("$task failed : $prop is not passed as a parameter...");
+    }
+}
+
+tasks.matching { it.name in ['jar', 'bootJar', 'build'] }.configureEach {
+    doFirst {
+        checkProperty(name, 'version', project.gradle.startParameter.projectProperties)
+    }
+}
+
+tasks.named('bootBuildImage').configure {
+    doFirst {
+        checkPropertiesNotEmpty(name, project.gradle.startParameter.projectProperties)
+
+        def props = project.gradle.startParameter.projectProperties
+        checkProperty(name, 'version', props)
+        checkProperty(name, 'imageName', props)
+
+        if (project.findProperty("publishImage")?.toBoolean()) {
+            ['registryUsername', 'registryToken', 'registryUrl'].each { prop ->
+                checkProperty(name, prop, props)
             }
-        } else {
-            println "No -P parameters passed..."
         }
     }
 }
