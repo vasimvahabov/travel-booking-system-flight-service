@@ -18,7 +18,7 @@ jobs:
         with:
           expand: true
           path: './flight-service'
-          filenames: .env
+          filenames: '.env'
       - name: Export env variables to GitHub
         run: |
           echo "IMAGE_NAME_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_NAME_FLIGHT_SERVICE }}" >> $GITHUB_ENV
