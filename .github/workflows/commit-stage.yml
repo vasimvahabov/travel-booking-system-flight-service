@@ -58,6 +58,7 @@ jobs:
           path: '.env'
           export-variables: true
           ensure-exists: true
+          keys-case: 'upper'
       - name: Print all environment variables
         run: env
       - name: Build the container image
