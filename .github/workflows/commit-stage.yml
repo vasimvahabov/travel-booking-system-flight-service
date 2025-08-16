@@ -58,6 +58,15 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: gradle
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Export env variables to GitHub
+        id: dotenv
+        uses: falti/dotenv-action@v1.1.4
+        with:
+          path: '.env'
+          export-variables: true
+          ensure-exists: true
       - name: Build the container image
         run: |
           chmod +x gradlew
