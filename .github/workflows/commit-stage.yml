@@ -63,6 +63,7 @@ jobs:
       - name: Build the container image
         run: |
           chmod +x gradlew
+          echo "Using version: $IMAGE_VERSION_FLIGHT_SERVICE"
           ./gradlew bootBuildImage \
           -Pversion=$IMAGE_VERSION_FLIGHT_SERVICE
       - name: Scan OCI the image vulnerability
