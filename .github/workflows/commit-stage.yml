@@ -65,12 +65,12 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew printParameters bootBuildImage \
-          -Pversion=${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
+          -Pversion=${IMAGE_VERSION_FLIGHT_SERVICE}
       - name: Scan OCI the image vulnerability
         uses: anchore/scan-action@v4
         id: scan
         with:
-          image: ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
+          image: ${IMAGE_VERSION_FLIGHT_SERVICE}:${IMAGE_VERSION_FLIGHT_SERVICE}
           fail-build: false
           severity-cutoff: high
       - name: Upload the vulnerability report
@@ -85,4 +85,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish the container image
-        run: docker push ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
+        run: docker push ${IMAGE_NAME_FLIGHT_SERVICE}:${IMAGE_VERSION_FLIGHT_SERVICE}
