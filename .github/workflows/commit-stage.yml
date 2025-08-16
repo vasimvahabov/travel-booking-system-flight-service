@@ -1,10 +1,9 @@
 name: Commit Stage
 on: push
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/vasimvahabov/flight-service
-  VERSION: 0.1.1
+#env:
+#  IMAGE_NAME: ghcr.io/vasimvahabov/flight-service
+#  VERSION: 0.1.1
 
 jobs:
   build:
@@ -14,6 +13,12 @@ jobs:
       contents: read
       security-events: write
     steps:
+      - name: Load Environment variables from .env file
+        uses: aarcangeli/load-dotenv@v1
+        with:
+          expand: true
+          path: ../../
+          filenames: .env
       - name: Checkout the source code
         uses: actions/checkout@v4
       - name: Set up the JDK
@@ -60,13 +65,12 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew printParameters bootBuildImage \
-          -PimageName=${{ env.IMAGE_NAME }} \
-          -Pversion=${{ env.VERSION }}
+          -Pversion=${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
       - name: Scan OCI the image vulnerability
         uses: anchore/scan-action@v4
         id: scan
         with:
-          image: ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          image: ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
           fail-build: false
           severity-cutoff: high
       - name: Upload the vulnerability report
@@ -81,4 +85,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish the container image
-        run: docker push ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        run: docker push ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
