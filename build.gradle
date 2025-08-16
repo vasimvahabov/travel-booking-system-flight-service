@@ -90,7 +90,6 @@ tasks.named('bootBuildImage').configure {
 
         def props = project.gradle.startParameter.projectProperties
         checkProperty(name, 'version', props)
-        checkProperty(name, 'imageName', props)
 
         if (project.findProperty("publishImage")?.toBoolean()) {
             ['registryUsername', 'registryToken', 'registryUrl'].each { prop ->
@@ -108,7 +107,7 @@ bootBuildImage {
 
     builder = "docker.io/paketobuildpacks/builder-jammy-base"
     version = project.findProperty("version")
-    imageName = project.findProperty("imageName") + ":" + version
+    imageName = "flight-service" + ":" + version
     publish = project.findProperty("publishImage")?.toBoolean() ?: false
     environment = [
             "BP_JVM_VERSION": JavaVersion.current().majorVersion
