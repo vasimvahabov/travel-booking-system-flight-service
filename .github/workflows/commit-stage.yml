@@ -17,8 +17,6 @@ jobs:
         uses: aarcangeli/load-dotenv@v1
         with:
           expand: true
-#          path: ../../
-          filenames: .env
       - name: Export env variables to GitHub
         run: |
           echo "IMAGE_NAME_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_NAME_FLIGHT_SERVICE }}" >> $GITHUB_ENV
