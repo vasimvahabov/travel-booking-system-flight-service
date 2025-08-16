@@ -13,6 +13,10 @@ jobs:
       contents: read
       security-events: write
     steps:
+      - name: List files in workspace
+        run: |
+          pwd
+          ls -al
       - name: Export env variables to GitHub
         id: dotenv
         uses: falti/dotenv-action@v1.1.4
