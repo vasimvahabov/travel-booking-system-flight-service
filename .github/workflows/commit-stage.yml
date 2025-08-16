@@ -19,6 +19,7 @@ jobs:
         with:
           path: '.env'
           export-variables: true
+          ensure-exists: false
       - name: Checkout the source code
         uses: actions/checkout@v4
       - name: Set up the JDK
