@@ -13,16 +13,12 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - name: Load Environment variables from .env file
-        uses: aarcangeli/load-dotenv@v1
-        with:
-          expand: true
-          path: '/home/runner/work/flight-service/'
-          filenames: '.env'
       - name: Export env variables to GitHub
-        run: |
-          echo "IMAGE_NAME_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_NAME_FLIGHT_SERVICE }}" >> $GITHUB_ENV
-          echo "IMAGE_VERSION_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_VERSION_FLIGHT_SERVICE }}" >> $GITHUB_ENV
+        id: dotenv
+        uses: falti/dotenv-action@v1.1.4
+        with:
+          path: '.env'
+          export-variables: true
       - name: Checkout the source code
         uses: actions/checkout@v4
       - name: Set up the JDK
