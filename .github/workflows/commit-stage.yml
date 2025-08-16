@@ -64,9 +64,9 @@ jobs:
         run: |
           chmod +x gradlew
           env
-          echo "Using version: $IMAGE_VERSION_FLIGHT_SERVICE"
+          echo "Using version: $image_version_flight_service"
           ./gradlew bootBuildImage \
-          -Pversion=$IMAGE_VERSION_FLIGHT_SERVICE
+          -Pversion=$image_version_flight_service
       - name: Scan OCI the image vulnerability
         uses: anchore/scan-action@v4
         id: scan
