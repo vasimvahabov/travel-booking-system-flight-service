@@ -78,12 +78,6 @@ def checkProperty = { String task, String prop, def props ->
     }
 }
 
-tasks.matching { it.name in ['jar', 'bootJar', 'build'] }.configureEach {
-    doFirst {
-        checkProperty(name, 'version', project.gradle.startParameter.projectProperties)
-    }
-}
-
 tasks.named('bootBuildImage').configure {
     doFirst {
         checkPropertiesNotEmpty(name, project.gradle.startParameter.projectProperties)
