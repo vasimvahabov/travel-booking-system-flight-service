@@ -19,6 +19,10 @@ jobs:
           expand: true
           path: ../../
           filenames: .env
+      - name: Export env variables to GitHub
+        run: |
+          echo "IMAGE_NAME_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_NAME_FLIGHT_SERVICE }}" >> $GITHUB_ENV
+          echo "IMAGE_VERSION_FLIGHT_SERVICE=${{ steps.dotenv.outputs.IMAGE_VERSION_FLIGHT_SERVICE }}" >> $GITHUB_ENV
       - name: Checkout the source code
         uses: actions/checkout@v4
       - name: Set up the JDK
