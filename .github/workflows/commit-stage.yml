@@ -17,7 +17,7 @@ jobs:
         uses: aarcangeli/load-dotenv@v1
         with:
           expand: true
-          path: '/home/runner/work/flight-service/flight-service'
+          path: '/home/runner/work/flight-service/'
           filenames: '.env'
       - name: Export env variables to GitHub
         run: |
