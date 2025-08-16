@@ -13,6 +13,14 @@ jobs:
       contents: read
       security-events: write
     steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Set up the JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
       - name: List files in workspace
         run: |
           pwd
@@ -24,14 +32,6 @@ jobs:
           path: '.env'
           export-variables: true
           ensure-exists: true
-      - name: Checkout the source code
-        uses: actions/checkout@v4
-      - name: Set up the JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
       - name: Scan the code vulnerability
         uses: anchore/scan-action@v4
         id: scan
