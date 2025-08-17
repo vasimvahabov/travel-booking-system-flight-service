@@ -17,7 +17,7 @@ RUN useradd flight_service
 USER flight_service
 
 WORKDIR /flight-service
-ARG EXTRACTOR_EXTRACTED_JAR_PATH=/extracted/flight-service/
+ARG EXTRACTOR_EXTRACTED_JAR_PATH=/extracted/flight-service
 
 COPY --from=extractor ${EXTRACTOR_EXTRACTED_JAR_PATH}/dependencies/ .
 COPY --from=extractor ${EXTRACTOR_EXTRACTED_JAR_PATH}/spring-boot-loader/ .
