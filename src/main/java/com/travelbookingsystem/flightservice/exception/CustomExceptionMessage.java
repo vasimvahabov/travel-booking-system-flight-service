@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.exceptions;
+package com.travelbookingsystem.flightservice.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

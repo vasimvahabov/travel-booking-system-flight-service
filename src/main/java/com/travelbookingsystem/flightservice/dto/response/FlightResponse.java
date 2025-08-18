@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.dtos.response;
+package com.travelbookingsystem.flightservice.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

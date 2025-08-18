@@ -1,4 +1,4 @@
-package com.travelbookingsystem.flightservice.dtos.request;
+package com.travelbookingsystem.flightservice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;

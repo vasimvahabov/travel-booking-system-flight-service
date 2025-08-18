@@ -1,8 +1,7 @@
-package com.travelbookingsystem.flightservice.controllers;
+package com.travelbookingsystem.flightservice.controller;
 
-import com.travelbookingsystem.flightservice.controller.FlightController;
-import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
-import com.travelbookingsystem.flightservice.services.FlightService;
+import com.travelbookingsystem.flightservice.exception.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.service.FlightService;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;

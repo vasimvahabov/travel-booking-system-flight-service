@@ -1,6 +1,6 @@
-package com.travelbookingsystem.flightservice.entities;
+package com.travelbookingsystem.flightservice.entity;
 
-import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dto.request.FlightRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

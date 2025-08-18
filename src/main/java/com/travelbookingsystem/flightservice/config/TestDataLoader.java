@@ -1,6 +1,6 @@
 package com.travelbookingsystem.flightservice.config;
 
-import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.entity.Flight;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

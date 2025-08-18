@@ -1,9 +1,8 @@
 package com.travelbookingsystem.flightservice.controller;
 
-import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
-import com.travelbookingsystem.flightservice.dtos.response.FlightResponse;
-import com.travelbookingsystem.flightservice.entities.Flight;
-import com.travelbookingsystem.flightservice.services.FlightService;
+import com.travelbookingsystem.flightservice.dto.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dto.response.FlightResponse;
+import com.travelbookingsystem.flightservice.service.FlightService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

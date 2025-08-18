@@ -1,6 +1,6 @@
-package com.travelbookingsystem.flightservice.controllers;
+package com.travelbookingsystem.flightservice.controller;
 
-import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dto.request.FlightRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;

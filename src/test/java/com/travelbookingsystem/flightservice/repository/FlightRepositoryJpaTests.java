@@ -1,7 +1,7 @@
 package com.travelbookingsystem.flightservice.repository;
 
 import com.travelbookingsystem.flightservice.config.AuditConfig;
-import com.travelbookingsystem.flightservice.entities.Flight;
+import com.travelbookingsystem.flightservice.entity.Flight;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;

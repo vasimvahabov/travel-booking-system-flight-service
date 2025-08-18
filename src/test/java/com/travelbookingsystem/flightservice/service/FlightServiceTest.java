@@ -1,8 +1,8 @@
-package com.travelbookingsystem.flightservice.services;
+package com.travelbookingsystem.flightservice.service;
 
-import com.travelbookingsystem.flightservice.dtos.request.FlightRequest;
-import com.travelbookingsystem.flightservice.exceptions.FlightAlreadyExistsException;
-import com.travelbookingsystem.flightservice.exceptions.FlightNotFoundException;
+import com.travelbookingsystem.flightservice.dto.request.FlightRequest;
+import com.travelbookingsystem.flightservice.exception.FlightAlreadyExistsException;
+import com.travelbookingsystem.flightservice.exception.FlightNotFoundException;
 import com.travelbookingsystem.flightservice.mapper.FlightMapper;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
 import lombok.AccessLevel;
