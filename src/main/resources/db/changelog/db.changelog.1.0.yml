@@ -9,6 +9,7 @@ databaseChangeLog:
       changes:
         - dropSequence:
             sequenceName: seq_flight_id
+
   - changeSet:
       id: "1691199944"
       author: "VASIM VAHABOV"
@@ -18,6 +19,7 @@ databaseChangeLog:
             startValue: 1
             incrementBy: 1
             cacheSize: 1
+
   - changeSet:
       id: "1754366562"
       author: "VASIM VAHABOV"
@@ -25,10 +27,10 @@ databaseChangeLog:
         - onFail: MARK_RAN
         - tableExists:
             tableName: flights
-
       changes:
         - dropTable:
             tableName: flights
+
   - changeSet:
       id: "1754366641"
       author: "VASIM VAHABOV"
