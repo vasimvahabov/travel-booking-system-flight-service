@@ -21,6 +21,7 @@ ext {
 	springCloudVersion = '2025.0.0'
 	testContainersVersion = '1.21.3'
 	mapstructVersion = '1.6.3'
+    lombokMapstructBindingVersion='0.2.0'
 }
 
 dependencies {
@@ -42,8 +43,12 @@ dependencies {
 	annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+//    we need this dependency to be sure that lombok runs first
+//    order of the annotationProcessor matters
+//    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
     testImplementation "org.testcontainers:postgresql"
 
