@@ -19,17 +19,14 @@ Content-Type: application/json
     "price" : 15.99
 
 }
-###
 
-## find all flights
+### find all flights
 GET localhost:8899/api/v1/flights
-###
 
-## find flight by number
+### find flight by number
 GET localhost:8899/api/v1/flights/aa144
-####
 
-## update flight
+### update flight
 PUT localhost:8899/api/v1/flights
 Content-Type: application/json
 
@@ -50,17 +47,12 @@ Content-Type: application/json
     "price" : 10.99
 
 }
-###
 
-## delete flight by number
+### delete flight by number
 DELETE localhost:8899/api/v1/flights/aa133
 
-###
-
-## request app info
+### request app info
 GET localhost:8899/api/v1/app/info
 
-###
-
-## post request actuater refresh
+### post request actuater refresh
 POST localhost:8899/actuator/refresh
