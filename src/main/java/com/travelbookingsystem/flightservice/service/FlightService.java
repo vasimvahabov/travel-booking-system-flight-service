@@ -30,7 +30,7 @@ public class FlightService {
                 .map(flightMapper::entityToResponse)
                 .toList();
 
-        log.info("{} flights returned : ", flightResponses.size());
+        log.info("{} flights returned", flightResponses.size());
         return flightResponses;
     }
 
