@@ -29,4 +29,18 @@ public class FlightResponse {
 
     BigDecimal price;
 
+    @Override
+    public String toString() {
+        return "FlightResponse{" +
+                "id=" + id +
+                ", airplaneId=" + airplaneId +
+                ", number='" + number + '\'' +
+                ", departureAirportCode='" + departureAirportCode + '\'' +
+                ", arrivalAirportCode='" + arrivalAirportCode + '\'' +
+                ", departureDateTime=" + departureDateTime +
+                ", arrivalDateTime=" + arrivalDateTime +
+                ", price=" + price +
+                '}';
+    }
+
 }
