@@ -24,14 +24,14 @@ public class FlightService {
     FlightMapper flightMapper;
 
     public List<FlightResponse> findAll() {
-        var flightResponses = flightRepository
+        var responses = flightRepository
                 .findAll()
                 .stream()
                 .map(flightMapper::entityToResponse)
                 .toList();
 
-        log.info("{} flights returned", flightResponses.size());
-        return flightResponses;
+        log.info("Successfully retrieved flights : {}", responses.size());
+        return responses;
     }
 
     public FlightResponse findByNumber(String number) {
@@ -39,7 +39,7 @@ public class FlightService {
                 .map(flightMapper::entityToResponse)
                 .orElseThrow(() -> new FlightNotFoundException(number));
 
-        log.info("Flight returned : {}", response);
+        log.info("Successfully retrieved flight: {}", response);
         return response;
     }
 
@@ -51,7 +51,7 @@ public class FlightService {
                 flightRepository.save(flightMapper.requestToEntity(request))
         );
 
-        log.info("Flight created : {}", response);
+        log.info("Successfully created flight: {}", response);
         return response;
     }
 
@@ -63,13 +63,19 @@ public class FlightService {
                         flightRepository.save(flightMapper.requestToEntity(request))
                 ));
 
-        log.info("Flight updated : {}", response);
+        log.info("Successfully updated flight: : {}", response);
         return response;
     }
 
     public void deleteByNumber(String number) {
-        flightRepository.deleteByNumber(number);
-        log.info("Flight with number {} deleted", number);
+        boolean isExist = existsByNumber(number);
+        if (isExist) {
+            flightRepository.deleteByNumber(number);
+        }
+
+        log.info(isExist
+                ? "Flight with number {} deleted"
+                : "Flight with number {} not found, nothing deleted", number);
     }
 
     private boolean existsByNumber(String number) {
