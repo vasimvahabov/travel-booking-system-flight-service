@@ -1,6 +1,7 @@
 package com.travelbookingsystem.flightservice;
 
 import com.travelbookingsystem.flightservice.dto.request.FlightRequest;
+import com.travelbookingsystem.flightservice.dto.response.FlightResponse;
 import com.travelbookingsystem.flightservice.entity.Flight;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -41,7 +42,7 @@ class FlightServiceApplicationTests {
 				.bodyValue(request)
 				.exchange()
 				.expectStatus().isCreated()
-				.expectBody(Flight.class)
+				.expectBody(FlightResponse.class)
 				.value(payload -> {
 					Assertions.assertThat(payload).isNotNull();
 					Assertions.assertThat(payload.getNumber()).isEqualTo(request.getNumber());
