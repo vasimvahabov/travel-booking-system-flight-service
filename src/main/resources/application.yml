@@ -33,6 +33,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:4455/realms/travel-booking-system}
+
+
 application:
   environment: Local
 
