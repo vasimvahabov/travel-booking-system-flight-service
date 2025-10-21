@@ -20,11 +20,12 @@ repositories {
 }
 
 ext {
-	lombokVersion = '1.18.38'
-	springCloudVersion = '2025.0.0'
-	testContainersVersion = '1.21.3'
-	mapstructVersion = '1.6.3'
-    lombokMapstructBindingVersion='0.2.0'
+    lombokVersion = '1.18.38'
+    springCloudVersion = '2025.0.0'
+    testContainersVersion = '1.21.3'
+    mapstructVersion = '1.6.3'
+    lombokMapstructBindingVersion = '0.2.0'
+    testContainersKeycloakVersion = '3.9.0'
 }
 
 dependencies {
@@ -40,21 +41,23 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 //	implementation 'org.springframework.retry:spring-retry'
 
-	compileOnly "org.projectlombok:lombok:$lombokVersion"
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
 	runtimeOnly 'org.postgresql:postgresql'
 
-	annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 //    we need this dependency to be sure that lombok runs first
 //    order of the annotationProcessor matters
 //    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
     testImplementation "org.testcontainers:postgresql"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainersKeycloakVersion}"
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
