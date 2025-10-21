@@ -1,3 +1,15 @@
 spring:
   datasource:
     url: jdbc:tc:postgresql:17.5:///
+
+keycloak:
+  client:
+    id: edge-server
+    secret: ewkA2aaLuRPmAny3igYgrY5O800MwcXI
+  users:
+    - role: employee
+      username: edge-server-employee
+      password: CZcQIn#ETNt@AzWZEhO6
+    - role: customer
+      username: edge-server-customer
+      password: CZcQIn#ETNt@AzWZEhO6
