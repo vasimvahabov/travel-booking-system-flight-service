@@ -13,11 +13,15 @@ public interface FlightMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdDateTime", ignore = true)
     @Mapping(target = "lastModifiedDateTime", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     Flight requestToEntity(FlightRequest flightRequest);
 
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdDateTime", ignore = true)
     @Mapping(target = "lastModifiedDateTime", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     Flight updateEntityFromRequest(FlightRequest request, @MappingTarget Flight flight);
 
 }
