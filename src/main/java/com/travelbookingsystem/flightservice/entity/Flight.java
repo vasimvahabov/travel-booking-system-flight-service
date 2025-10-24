@@ -54,14 +54,12 @@ public class Flight {
     LocalDateTime arrivalDateTime;
 
     @CreatedDate
-    @Builder.Default
     @Column(name = "created_date_time")
-    Instant createdDateTime = Instant.now();
+    Instant createdDateTime;
 
-    @Builder.Default
     @LastModifiedDate
     @Column(name = "last_modified_date_time")
-    Instant lastModifiedDateTime = Instant.now();
+    Instant lastModifiedDateTime;
 
     @Column(name = "price")
     BigDecimal price;
