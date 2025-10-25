@@ -11,7 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 import static com.travelbookingsystem.flightservice.config.ApplicationConstants.*;
 
@@ -24,10 +23,9 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers(
-                                        new RegexRequestMatcher("\\/api\\/v\\d+\\/app(\\/.*)?$", HttpMethod.GET.name()),
-                                        new RegexRequestMatcher("\\/api\\/v\\d+\\/flights(\\/.*)?$", HttpMethod.GET.name())
-                                ).permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v*/flights/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/app/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/actuator/**").authenticated()
                                 .anyRequest().hasRole(ROLE_EMPLOYEE)
                 ).oauth2ResourceServer(resourceServer ->
                         resourceServer.jwt(Customizer.withDefaults())
