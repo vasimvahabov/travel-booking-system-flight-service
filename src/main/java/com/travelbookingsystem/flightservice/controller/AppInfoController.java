@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/app")
+@RequestMapping("/app")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AppInfoController {
 
