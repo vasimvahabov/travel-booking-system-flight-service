@@ -52,7 +52,7 @@ class FlightRepositoryJpaTests {
     }
 
     @Test
-    void whenAuthenticated_thenSavesFlight() {
+    void whenAuthenticated_thenCreatesFlight() {
         var flight = Flight.builder()
                 .airplaneId(5L)
                 .number("BC544")
