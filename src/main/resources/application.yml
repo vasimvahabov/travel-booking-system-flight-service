@@ -51,6 +51,8 @@ management:
     health:
       show-components: always
       show-details: always
+      probes:
+        enabled: true
 
 server:
   port: 8899
