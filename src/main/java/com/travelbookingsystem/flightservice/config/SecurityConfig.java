@@ -25,7 +25,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers(HttpMethod.GET, "/api/v*/flights/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/app/**").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/actuator/**").authenticated()
+                                .requestMatchers("/actuator/**").permitAll()
                                 .anyRequest().hasRole(ROLE_EMPLOYEE)
                 ).oauth2ResourceServer(resourceServer ->
                         resourceServer.jwt(Customizer.withDefaults())

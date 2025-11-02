@@ -39,7 +39,6 @@ spring:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI:http://localhost:4455/realms/travel-booking-system}
 
-
 application:
   environment: Local
 
@@ -47,7 +46,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh
+        include: refresh, health
 
 server:
   port: 8899
