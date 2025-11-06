@@ -46,13 +46,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health
+        include: refresh, health, metrics, prometheus
   endpoint:
     health:
       show-components: always
       show-details: always
       probes:
         enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 server:
   port: 8001
