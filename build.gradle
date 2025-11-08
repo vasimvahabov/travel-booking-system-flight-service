@@ -26,6 +26,7 @@ ext {
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
     testContainersKeycloakVersion = '3.9.0'
+    otelVersion = '2.21.0'
 }
 
 dependencies {
@@ -45,8 +46,10 @@ dependencies {
 
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
 
-	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 //    we need this dependency to be sure that lombok runs first

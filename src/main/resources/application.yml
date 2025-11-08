@@ -3,7 +3,7 @@ spring:
     name: flight-service
   config:
     import: "optional:configserver:"
-#    import: "configserver:"
+  #    import: "configserver:"
   cloud:
     config:
       uri: http://localhost:6464
@@ -19,15 +19,15 @@ spring:
     username: user_postgres
     password: 6eEvI63t20
     url: jdbc:postgresql://localhost:5432/flights
-#    url: jdbc:postgresql://postgres-travel-booking-system:5432/flights
+    #    url: jdbc:postgresql://postgres-travel-booking-system:5432/flights
     hikari:
       maximum-pool-size: 5
       connection-timeout: 2000
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yml
   #  sql:
-#    init:
-#      mode: always
+  #    init:
+  #      mode: always
   lifecycle:
     timeout-per-shutdown-phase: 15s
   jpa:
@@ -66,3 +66,7 @@ server:
       min-spare: 5
       max: 50
   shutdown: graceful
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name}, %X{trace_id}, %X{span_id}]"
