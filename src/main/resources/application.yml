@@ -50,13 +50,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, metrics, prometheus, liquibase, info
+        include: refresh, health, metrics, prometheus, liquibase, info, heapdump
   endpoint:
     health:
       show-components: always
       show-details: always
       probes:
         enabled: true
+    heapdump:
+      access: unrestricted
   metrics:
     tags:
       application: ${spring.application.name}
