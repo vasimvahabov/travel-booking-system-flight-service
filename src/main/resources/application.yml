@@ -24,7 +24,7 @@ spring:
       maximum-pool-size: 5
       connection-timeout: 2000
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.yml
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
   #  sql:
   #    init:
   #      mode: always
@@ -46,7 +46,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, metrics, prometheus
+        include: refresh, health, metrics, prometheus, liquibase
   endpoint:
     health:
       show-components: always
