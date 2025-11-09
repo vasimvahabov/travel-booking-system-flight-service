@@ -139,3 +139,7 @@ tasks.register('setupKeycloakTestResources', Download) {
 }
 
 processTestResources.mustRunAfter setupKeycloakTestResources
+
+springBoot {
+    buildInfo()
+}
