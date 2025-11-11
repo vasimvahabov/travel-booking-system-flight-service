@@ -1,16 +1,16 @@
 info:
   system: Travel Booking System Flight Service
-#  environment: Local
+  environment: Local
 
 spring:
   application:
     name: flight-service
   config:
-    import: "optional:configserver:"
-  #    import: "configserver:"
+    import: ""
   cloud:
     config:
-      uri: http://localhost:6464
+      enabled: false
+      uri: http://localhost:8005
       request-connect-timeout: 5000
       request-read-timeout: 5000
       fail-fast: false
@@ -23,7 +23,6 @@ spring:
     username: user_postgres
     password: 6eEvI63t20
     url: jdbc:postgresql://localhost:5432/flights
-    #    url: jdbc:postgresql://postgres-travel-booking-system:5432/flights
     hikari:
       maximum-pool-size: 5
       connection-timeout: 2000
@@ -42,9 +41,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI:http://localhost:4455/realms/travel-booking-system}
-
-application:
-  environment: Local
 
 management:
   endpoints:
