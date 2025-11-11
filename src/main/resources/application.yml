@@ -1,5 +1,5 @@
 info:
-  system: Travel Booking System Flight Service
+  system: Flight Service
   environment: Local
 
 spring:
