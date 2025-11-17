@@ -1,0 +1,30 @@
+name: Acceptance Stage
+on:
+  workflow_run:
+    workflows: ['Commit Stage']
+    types: [completed]
+    branches: main
+
+concurrency:
+  group: acceptance
+  cancel-in-progress: true
+
+jobs:
+  functional:
+    name: Functional Tests (Acceptance)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Executing Functional Acceptance Tests ..."
+  performance:
+    name: Performance Tests (Acceptance)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Executing Performance Tests ..."
+  security:
+    name: Security Tests (Acceptance)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Executing Security Tests ..."
