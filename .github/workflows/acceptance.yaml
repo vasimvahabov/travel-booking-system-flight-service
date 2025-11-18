@@ -1,13 +1,20 @@
 name: Acceptance Stage
 on:
   workflow_run:
-    workflows: ['Commit Stage']
-    types: [completed]
+    workflows: [ 'Commit Stage' ]
+    types: [ completed ]
     branches: main
 
 concurrency:
   group: acceptance
   cancel-in-progress: true
+
+env:
+  REPO_OWNER: vasimvahabov
+  REGISTRY: ghcr.io
+  REPO_APP: flight-service
+  REPO_DEPLOY: travel-booking-system-deployment
+  VERSION: ${{ github.sha }}
 
 jobs:
   functional:
@@ -28,3 +35,20 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Executing Security Tests ..."
+  deliver:
+    name: Trigger deployment of release candidate
+    needs: [ functional, performance, security ]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Send deployment event to target repository
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: "${{ secrets.TOKEN_WORKFLOW }}"
+          repository: "${{ env.REPO_OWNER }}/${{ env.REPO_DEPLOY }}"
+          event-type: delivery
+          client-payload: |-
+            {
+              "app_image": "${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_APP }}",
+              "app_name": "${{ env.REPO_APP }}",
+              "app_version": "${{ env.VERSION }}"
+            }
