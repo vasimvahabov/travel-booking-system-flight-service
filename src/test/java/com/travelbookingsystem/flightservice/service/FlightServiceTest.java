@@ -5,6 +5,7 @@ import com.travelbookingsystem.flightservice.exception.FlightAlreadyExistsExcept
 import com.travelbookingsystem.flightservice.exception.FlightNotFoundException;
 import com.travelbookingsystem.flightservice.mapper.FlightMapper;
 import com.travelbookingsystem.flightservice.repository.FlightRepository;
+import com.travelbookingsystem.flightservice.service.impl.FlightServiceImpl;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.assertj.core.api.Assertions;
@@ -34,7 +35,7 @@ class FlightServiceTest {
     FlightMapper flightMapper;
 
     @InjectMocks
-    FlightService flightService;
+    FlightServiceImpl flightService;
 
     @Test
     void whenFlightAlreadyExistsThenThrowsFlightAlreadyExistsException() {

@@ -24,7 +24,7 @@ ext {
     springCloudVersion = '2025.0.0'
     testContainersVersion = '1.21.3'
     mapstructVersion = '1.6.3'
-    lombokMapstructBindingVersion = '0.2.0'
+//    lombokMapstructBindingVersion = '0.2.0'
     testContainersKeycloakVersion = '3.9.0'
     otelVersion = '2.21.0'
 }
