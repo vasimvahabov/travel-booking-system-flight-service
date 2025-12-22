@@ -22,7 +22,7 @@ repositories {
 ext {
     lombokVersion = '1.18.38'
     springCloudVersion = '2025.0.0'
-    testContainersVersion = '1.21.3'
+    testContainersVersion = '2.0.3'
     mapstructVersion = '1.6.3'
 //    lombokMapstructBindingVersion = '0.2.0'
     testContainersKeycloakVersion = '3.9.0'
