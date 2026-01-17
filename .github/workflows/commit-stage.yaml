@@ -3,9 +3,8 @@ on: push
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_VERSION_FLIGHT_SERVICE: 0.8.2:${{ github.sha }}
+  IMAGE_VERSION_FLIGHT_SERVICE: 0.8.1-${{ github.sha }}
   IMAGE_NAME_FLIGHT_SERVICE: ghcr.io/vasimvahabov/flight-service
-
 
 jobs:
   build:
@@ -43,7 +42,7 @@ jobs:
     name: Package and Publish
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [ build ]
+    needs: [build]
     permissions:
       contents: read
       packages: write

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: user_postgres
+    password: 6eEvI63t20
+    url: jdbc:postgresql://localhost:5432/flights
