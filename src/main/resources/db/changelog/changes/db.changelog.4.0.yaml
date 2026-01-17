@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1768492001"
+      author: "VASIM VAHABOV"
+      changes:
+        - addDefaultValue:
+            tableName: flights
+            columnName: version
+            columnDataType: integer
+            defaultValueNumeric: 0
+
+  - changeSet:
+      id: "1768492000"
+      author: "VASIM VAHABOV"
+      changes:
+        - sql:
+            stripComments: false
+            splitStatements: false
+            sql: |
+              insert into flights(
+                id,
+                airplane_id,
+                number,
+                departure_airport_code,
+                arrival_airport_code,
+                departure_date_time,
+                arrival_date_time,
+                price
+              ) values
+              (9223372036854775601, 2000001, 'BA451', 'LHR', 'CDG', '2025-09-10 14:45', '2025-09-10 16:05', 59.99),
+              (9223372036854775602, 2000002, 'AF203', 'CDG', 'AMS', '2025-07-22 08:15', '2025-07-22 09:45', 42.75),
+              (9223372036854775603, 2000003, 'EI390', 'DUB', 'BCN', '2025-10-01 11:00', '2025-10-01 14:20', 120.00)
