@@ -5,6 +5,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
     id 'de.undercouch.download' version '5.6.0'
+    id 'com.microsoft.azure.azurewebapp' version '1.2.0'
 }
 
 group = 'com.travelbookingsystem'
@@ -22,6 +23,7 @@ repositories {
 ext {
     lombokVersion = '1.18.38'
     springCloudVersion = '2025.0.0'
+    springCloudAzureVersion = '6.0.0'
     testContainersVersion = '2.0.3'
     mapstructVersion = '1.6.3'
 //    lombokMapstructBindingVersion = '0.2.0'
@@ -39,6 +41,7 @@ dependencies {
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	implementation 'org.liquibase:liquibase-core'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault'
 //	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 //	implementation 'org.springframework.retry:spring-retry'
 
@@ -75,6 +78,7 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
 		mavenBom "org.testcontainers:testcontainers-bom:${testContainersVersion}"
+		mavenBom "com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
 	}
 }
 
@@ -142,4 +146,48 @@ processTestResources.mustRunAfter setupKeycloakTestResources
 
 springBoot {
     buildInfo()
+}
+
+tasks.named("azureWebAppDeploy").configure {
+
+    doFirst {
+        def props = project.gradle.startParameter.projectProperties
+        checkPropertiesNotEmpty(name, props)
+
+        [
+          "az-subscription",
+          "az-rg",
+          "az-webapp",
+          "az-kv",
+          "az-kv-uri"
+        ].each { prop ->
+            checkProperty(name, prop, props)
+        }
+    }
+
+    azurewebapp.subscription  = project.findProperty("az-subscription")
+    azurewebapp.resourceGroup = project.findProperty("az-rg")
+    azurewebapp.appName = project.findProperty("az-webapp")
+    azurewebapp.region = project.findProperty("az-region")
+    azurewebapp.appSettings.AZ_KV = project.findProperty("az-kv")
+    azurewebapp.appSettings.AZ_KV_URI = project.findProperty("az-kv-uri")
+
+}
+
+azurewebapp {
+
+    pricingTier = 'B1'
+    runtime {
+        os = 'linux'
+        webContainer = 'Java SE'
+        javaVersion = 'Java 21'
+    }
+    appSettings {
+       SERVER_PORT = '8001'
+       ACTIVE_PROFILE = 'azure'
+    }
+    auth {
+        type = 'azure_cli'
+    }
+
 }
