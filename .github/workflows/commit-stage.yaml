@@ -2,7 +2,10 @@ name: Commit Stage
 on: push
 
 env:
-  IMAGE_VERSION_FLIGHT_SERVICE: ${{ github.sha }}
+  REGISTRY: ghcr.io
+  IMAGE_VERSION_FLIGHT_SERVICE: 0.8.1:${{ github.sha }}
+  IMAGE_NAME_FLIGHT_SERVICE: ghcr.io/vasimvahabov/flight-service
+
 
 jobs:
   build:
@@ -54,14 +57,14 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: gradle
-      - name: Export env variables to GitHub
-        id: dotenv
-        uses: falti/dotenv-action@v1.1.4
-        with:
-          path: '.env'
-          export-variables: true
-          ensure-exists: true
-          keys-case: 'upper'
+      # - name: Export env variables to GitHub
+      #   id: dotenv
+      #   uses: falti/dotenv-action@v1.1.4
+      #   with:
+      #     path: '.env'
+      #     export-variables: true
+      #     ensure-exists: true
+      #     keys-case: 'upper'
       - name: Build the container image
         run: |
           chmod +x gradlew
