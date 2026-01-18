@@ -1,0 +1,485 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  TASK_ROOT: ".task"
+
+  TASK_VARS: "{{.TASK_ROOT}}/vars"
+
+  # Location
+  AZ_LOCATION: ""
+
+  # Resource Group
+  AZ_RG: ""
+
+  # Web App
+  AZ_WEBAPP: ""
+
+  # Key Vault
+  AZ_KV: ""
+
+  # Virtual Network
+  AZ_VNET: ""
+
+  # Subnet for Postgress
+  AZ_SUBNET_PG: ""
+
+  # Subnet for Web App
+  AZ_SUBNET_WEBAPP: ""
+
+  # Subnet for Private Endpoints
+  AZ_SUBNET_PE: ""
+
+  # Private DNS Link for Postgres
+  AZ_PDNS_LINK_PG: ""
+
+  # Private DNS Link for Key Vault
+  AZ_PDNS_LINK_KV: ""
+
+  # Private DNS Zone for Postgres
+  AZ_PDNS_ZONE_PG: ""
+  # AZ_PDNS_ZONE_PG: "privatelink.postgres.database.azure.com"
+
+  # Private DNS Zone for Key Vault
+  AZ_PDNS_ZONE_KV: "privatelink.vaultcore.azure.net"
+
+  # Private Endpoint for Key Vault
+  AZ_PE_KV: ""
+
+  # Connection for Key Vault
+  AZ_PE_CONNECTION_KV: ""
+
+  # Private Endpoint DNS Zone Group
+  AZ_PE_DNS_ZG_KV: ""
+
+  # Azure Database for PostgreSQL flexible server instance
+  AZ_PG_FLEX: ""
+
+  # Posgtres DB user key
+  AZ_PG_USR_KEY: ""
+
+  # Posgtres DB password key
+  AZ_PG_PWD_KEY: ""
+
+  # Posgtres DB url key
+  AZ_PG_DB_URL_KEY: ""
+
+dotenv: [".env"]
+
+tasks:
+  default:
+    desc: "Full deployment pipeline"
+    cmds:
+      - task: setup-env
+      - task: setup-network
+      - task: setup-pg
+      - task: setup-kv
+      - task: deploy-webapp
+    silent: true
+
+  clean-up:
+    desc: Clean up all resources created for the Web App
+    cmds:
+      - rm -rf "{{.TASK_ROOT}}"
+
+      # delete Resource Group idempotently
+      - |
+        az group delete --name "{{.AZ_RG}}" -y \
+        || echo "Resource Group doesn't exist..."
+
+      # delete Key Vault idempotently
+      - |
+        az keyvault purge --name "{{.AZ_KV}}" --location "{{.AZ_LOCATION}}" \
+        || echo "Key Vault doesn't exist..."
+
+  setup-env:
+    desc: Setup environment
+    cmds:
+      # create task data folder
+      - mkdir -p "{{.TASK_VARS}}"
+
+      # create a Resource Group
+      - az group create --name "{{.AZ_RG}}" --location "{{.AZ_LOCATION}}"
+
+      # write Subscription ID to vars
+      - az account show --query "id" --output tsv > "{{.TASK_VARS}}/AZ_SUBSCRIPTION_ID"
+
+      # write User ID to vars
+      - az ad signed-in-user show --query id -o tsv > "{{.TASK_VARS}}/AZ_USER_ID"
+
+  setup-network:
+    desc: Set Up a Virtual Network
+    cmds:
+      # create a Virtual Network
+      - |
+        az network vnet create \
+          --name "{{.AZ_VNET}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --location "{{.AZ_LOCATION}}" \
+          --address-prefixes 10.2.0.0/16
+
+      # create a Subnet for the Postgres Server
+      - |
+        az network vnet subnet create \
+          --resource-group "{{.AZ_RG}}" \
+          --vnet-name "{{.AZ_VNET}}" \
+          --name "{{.AZ_SUBNET_PG}}" \
+          --address-prefixes 10.2.2.0/24 \
+          --delegations Microsoft.DBforPostgreSQL/flexibleServers \
+          --private-endpoint-network-policies Enabled
+
+      # create a Subnet for the Private Endpoints
+      - |
+        az network vnet subnet create \
+            --resource-group "{{.AZ_RG}}" \
+            --vnet-name "{{.AZ_VNET}}" \
+            --name "{{.AZ_SUBNET_PE}}" \
+            --address-prefixes 10.2.3.0/27
+
+      # create a Subnet for the Web App
+      - |
+        az network vnet subnet create \
+            --resource-group "{{.AZ_RG}}" \
+            --vnet-name "{{.AZ_VNET}}" \
+            --name "{{.AZ_SUBNET_WEBAPP}}" \
+            --address-prefixes 10.2.4.0/27 \
+            --delegations Microsoft.Web/serverFarms
+
+      # verify the Subnet creation
+      - |
+        az network vnet subnet list \
+            --resource-group "{{.AZ_RG}}"  \
+            --vnet-name "{{.AZ_VNET}}" \
+            --output table \
+            --query "[].name"
+
+  setup-pg:
+    desc: Set Up a Postgres Flexible Server
+    cmds:
+      # create a Private DNS Zone for Postgres Server
+      - |
+        az network private-dns zone create \
+            --name "{{.AZ_PDNS_ZONE_PG}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # verify the Private DNS Zone creation
+      - |
+        az network private-dns zone list \
+            --resource-group "{{.AZ_RG}}" \
+            --output table \
+            --query "[].name"
+
+      # link the Postgres Private DNS Zone to the Virtual Network
+      - |
+        az network private-dns link vnet create \
+            --name "{{.AZ_PDNS_LINK_PG}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --zone-name "{{.AZ_PDNS_ZONE_PG}}" \
+            --virtual-network "{{.AZ_VNET}}" \
+            --registration-enabled false
+
+      # verify the Private Link creation
+      - |
+        az network private-dns link vnet list \
+            --resource-group "{{.AZ_RG}}" \
+            --zone-name "{{.AZ_PDNS_ZONE_PG}}" \
+            --output table \
+            --query "[].name"
+
+      # create an Azure Database for PostgreSQL flexible server instance
+      - |
+        az postgres flexible-server create \
+            --subscription "$(cat {{.TASK_VARS}}/AZ_SUBSCRIPTION_ID)" \
+            --resource-group "{{.AZ_RG}}" \
+            --name "{{.AZ_PG_FLEX}}" \
+            --location "{{.AZ_LOCATION}}" \
+            --version 18 \
+            --zone 1 \
+            --password-auth enabled \
+            --admin-user "{{.AZ_PG_USR_VAL}}" \
+            --admin-password "{{.AZ_PG_PWD_VAL}}" \
+            --tier burstable \
+            --sku-name Standard_B1ms \
+            --storage-type Premium_LRS \
+            --storage-size 32 \
+            --storage-auto-grow disabled \
+            --backup-retention 7 \
+            --zonal-resiliency disabled \
+            --vnet "{{.AZ_VNET}}" \
+            --subnet "{{.AZ_SUBNET_PG}}" \
+            --private-dns-zone "{{.AZ_PDNS_ZONE_PG}}"
+
+      # verify the created Posgtres server instance
+      - |
+        az postgres flexible-server show \
+            --name "{{.AZ_PG_FLEX}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --output table \
+            --query "name"
+
+  setup-kv:
+    desc: Set Up a Key Vault
+    cmds:
+      # create a Key Vault for the Web App
+      - |
+        az keyvault create \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --public-network-access Enabled \
+            --default-action deny
+
+      # verify the Key Vault creation
+      - |
+        az keyvault list \
+            --resource-group "{{.AZ_RG}}" \
+            --output table \
+            --query "[].name"
+
+      # write Keyvault ID to vars
+      - az keyvault show --name "{{.AZ_KV}}" --query id -o tsv > "{{.TASK_VARS}}/AZ_KV_ID"
+
+      # add a Network Rule to allow local access to the Key Vault
+      - |
+        az keyvault network-rule add \
+          --name "{{.AZ_KV}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --ip-address "$(curl ifconfig.me)"
+
+      # verify the added Network Rule
+      - |
+        az keyvault network-rule list \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --query "ipRules" \
+            --output table
+
+      # assign Key Vault Secrets Officer role to the current user to allow managing secrets
+      - |
+        az role assignment create \
+            --assignee "$(cat {{.TASK_VARS}}/AZ_USER_ID)" \
+            --role "Key Vault Secrets Officer" \
+            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)"
+
+      # verify the Role assignment
+      - |
+        az role assignment list \
+            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)" \
+            --output table
+
+      # set Postgres username to the Key Vault
+      - |
+        for i in {1..6}; do
+          if az keyvault secret set \
+            --vault-name "{{.AZ_KV}}" \
+            --name "{{.AZ_PG_USR_KEY}}" \
+            --value "{{.AZ_PG_USR_VAL}}";
+          then
+            echo "Secret set successfully!"
+            break
+          else
+            echo "Failed to set secret. Retrying in 10s... ($i/6)"
+            sleep 10
+          fi
+        done
+
+      # set Postgres password to the Key Vault
+      - |
+        az keyvault secret set \
+            --vault-name "{{.AZ_KV}}" \
+            --name "{{.AZ_PG_PWD_KEY}}" \
+            --value "{{.AZ_PG_PWD_VAL}}"
+
+      # Postgres DB url
+      - echo "jdbc:postgresql://{{.AZ_FQDN_PG}}:5432/postgres?sslmode=require" > {{.TASK_VARS}}/AZ_PG_DB_URL_VAL
+
+      # set Postgres DB url to the Key Vault
+      - |
+        az keyvault secret set \
+            --vault-name "{{.AZ_KV}}" \
+            --name "{{.AZ_PG_DB_URL_KEY}}" \
+            --value "$(cat {{.TASK_VARS}}/AZ_PG_DB_URL_VAL)"
+
+      # list and verify secrets
+      - |
+        az keyvault secret list \
+            --vault-name "{{.AZ_KV}}" \
+            --output table
+
+      # disable public access
+      - |
+        az keyvault update \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --public-network-access Disabled
+
+      # delete the Network Rule for the Key Vault
+      - |
+        az keyvault network-rule remove \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --ip-address $(curl ifconfig.me)
+
+      # verify the "publicNetworkAccess" and "ipRules" fields in output
+      - |
+        az keyvault show \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # create a Private DNS Zone for Key Vault
+      - |
+        az network private-dns zone create \
+            --name "{{.AZ_PDNS_ZONE_KV}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # verify the Private DNS Zone creation
+      - |
+        az network private-dns zone list \
+            --resource-group "{{.AZ_RG}}" \
+            --output table \
+            --query "[].name"
+
+      # write Key Vault Private DNS Zone ID to vars
+      - |
+        az network private-dns zone show \
+            --name "{{.AZ_PDNS_ZONE_KV}}" \
+            --resource-group "{{ .AZ_RG}}" \
+            --query id -o tsv > "{{ .TASK_VARS}}/AZ_PDNS_ZONE_KV_ID"
+
+      # link the Key Vault Private DNS Zone to the Virtual Network
+      - |
+        az network private-dns link vnet create \
+            --name "{{ .AZ_PDNS_LINK_KV}}" \
+            --resource-group "{{ .AZ_RG}}" \
+            --zone-name "{{ .AZ_PDNS_ZONE_KV}}" \
+            --virtual-network "{{ .AZ_VNET}}" \
+            --registration-enabled false
+
+      # verify the Private Link creation
+      - |
+        az network private-dns link vnet list \
+            --resource-group "{{ .AZ_RG}}" \
+            --zone-name "{{ .AZ_PDNS_ZONE_KV}}" \
+            --output table \
+            --query "[].name"
+
+      # create a Private Endpoint for accessing the Key Vault
+      - |
+        az network private-endpoint create \
+            --name "{{ .AZ_PE_KV}}" \
+            --vnet-name "{{ .AZ_VNET}}" \
+            --subnet "{{ .AZ_SUBNET_PE}}" \
+            --private-connection-resource-id "$(cat {{.TASK_VARS}}/AZ_KV_ID)" \
+            --group-id vault \
+            --connection-name "{{.AZ_PE_CONNECTION_KV}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # verify the Private Endpoint creation
+      - |
+        az network private-endpoint list \
+            --resource-group "{{.AZ_RG}}" \
+            --output table
+
+      # associate the Private Endpoint with the Private DNS Zone
+      - |
+        az network private-endpoint dns-zone-group create \
+            --resource-group "{{.AZ_RG}}" \
+            --endpoint-name "{{.AZ_PE_KV}}" \
+            --name "{{.AZ_PE_DNS_ZG_KV}}" \
+            --private-dns-zone "$(cat {{.TASK_VARS}}/AZ_PDNS_ZONE_KV_ID)" \
+            --zone-name "{{.AZ_PDNS_ZONE_KV}}"
+
+      # verify the Private Endpoint DNS Zone Group creation
+      - |
+        az network private-endpoint dns-zone-group list \
+            --endpoint-name "{{.AZ_PE_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --output table
+
+    vars:
+      AZ_FQDN_PG:
+        # Postgres Server Fully Qualified Domain Name
+        sh: |
+          az postgres flexible-server show \
+            --name "{{.AZ_PG_FLEX}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --output tsv \
+            --query fullyQualifiedDomainName
+
+  deploy-webapp:
+    desc: Deploy the app to the Azure App Service
+    cmds:
+      - |
+        gradle clean azureWebAppDeploy \
+            -Paz-subscription="$(cat {{.TASK_VARS}}/AZ_SUBSCRIPTION_ID)" \
+            -Paz-region="{{.AZ_LOCATION}}" \
+            -Paz-rg="{{.AZ_RG}}" \
+            -Paz-webapp="{{.AZ_WEBAPP}}" \
+            -Paz-kv="{{.AZ_KV}}" \
+            -Paz-kv-uri="{{.AZ_KV_URI}}" \
+            -Paz-pg-usr="$(printf '${%s}' {{.AZ_PG_USR_KEY}})" \
+            -Paz-pg-pwd="$(printf '${%s}' {{.AZ_PG_PWD_KEY}})" \
+            -Paz-pg-db-url="$(printf '${%s}' {{.AZ_PG_DB_URL_KEY}})"
+
+      # integrate the Web App into the VNET
+      - |
+        az webapp vnet-integration add \
+            --name "{{.AZ_WEBAPP}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --vnet "{{.AZ_VNET}}" \
+            --subnet "{{.AZ_SUBNET_WEBAPP}}"
+
+      # configure logging to filesystem
+      - |
+        az webapp log config \
+            --application-logging filesystem \
+            --name "{{.AZ_WEBAPP}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --level information
+
+      # enable system-assigned identity for the Web App
+      - |
+        az webapp identity assign \
+            --name "{{.AZ_WEBAPP}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # verify enabled system-assigned identity
+      - |
+        az webapp identity show \
+            --name "{{.AZ_WEBAPP}}" \
+            --resource-group "{{.AZ_RG}}"
+
+      # write Web App System Identity ID to vars
+      - |
+        az webapp identity show \
+            --resource-group "{{.AZ_RG}}" \
+            --name "{{.AZ_WEBAPP}}" \
+            --query principalId -o tsv > "{{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID"
+
+      # assign the Key Vault Secrets User role to the system-assigned identity
+      - |
+        az role assignment create \
+            --role "Key Vault Secrets User" \
+            --assignee "$(cat {{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID)" \
+            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)"
+
+      # verify the Role assignment
+      - |
+        az role assignment list \
+            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)" \
+            --output table \
+            --query "[].roleDefinitionName"
+
+      # restart the Web App
+      - az webapp restart --name "{{.AZ_WEBAPP}}" --resource-group "{{.AZ_RG}}"
+
+      # stream the Web App logs
+      - az webapp log tail --name "{{.AZ_WEBAPP}}" --resource-group "{{.AZ_RG}}"
+    vars:
+      AZ_KV_URI:
+        sh: |
+          az keyvault show \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --output tsv \
+            --query "properties.vaultUri"

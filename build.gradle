@@ -151,26 +151,34 @@ springBoot {
 tasks.named("azureWebAppDeploy").configure {
 
     doFirst {
+
         def props = project.gradle.startParameter.projectProperties
         checkPropertiesNotEmpty(name, props)
 
         [
           "az-subscription",
+          "az-region",
           "az-rg",
           "az-webapp",
           "az-kv",
-          "az-kv-uri"
+          "az-kv-uri",
+          "az-pg-usr",
+          "az-pg-pwd",
+          "az-pg-db-url"
         ].each { prop ->
             checkProperty(name, prop, props)
         }
     }
 
     azurewebapp.subscription  = project.findProperty("az-subscription")
+    azurewebapp.region = project.findProperty("az-region")
     azurewebapp.resourceGroup = project.findProperty("az-rg")
     azurewebapp.appName = project.findProperty("az-webapp")
-    azurewebapp.region = project.findProperty("az-region")
     azurewebapp.appSettings.AZ_KV = project.findProperty("az-kv")
     azurewebapp.appSettings.AZ_KV_URI = project.findProperty("az-kv-uri")
+    azurewebapp.appSettings.AZ_PG_USR = project.findProperty("az-pg-usr")
+    azurewebapp.appSettings.AZ_PG_PWD = project.findProperty("az-pg-pwd")
+    azurewebapp.appSettings.AZ_PG_DB_URL = project.findProperty("az-pg-db-url")
 
 }
 

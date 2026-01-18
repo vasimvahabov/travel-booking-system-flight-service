@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    azure:
+      keyvault:
+        credential:
+          managed-identity-enabled: true
+        secret:
+          property-sources:
+            - name: ${AZ_KV}
+              endpoint: ${AZ_KV_URI}
+  datasource:
+    username: ${AZ_PG_USR}
+    password: ${AZ_PG_PWD}
+    url: ${AZ_PG_DB_URL}
