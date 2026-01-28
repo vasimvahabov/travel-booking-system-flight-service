@@ -20,7 +20,7 @@
   echo 'AZ_PG_PWD_VAL="<POSTGRES_PASSWORD>"' >> .env
   ```
 
-- Be sure `DBforPostgreSQL` resource provider is registered:
+- Ensure `DBforPostgreSQL` resource provider is registered:
   ```sh
   az provider list \
      --out table \
@@ -39,7 +39,7 @@
       --query "resourceTypes[*].resourceType"
   ```
 
-- Be sure `KeyVault` resource provider is registered:
+- Ensure `KeyVault` resource provider is registered:
   ```sh
   az provider list \
       --out table \
@@ -57,6 +57,27 @@
       --out table \
       --query "resourceTypes[*].resourceType"
   ```
+
+- (Optional — required only when deploying a custom container) Ensure the `Microsoft.ContainerRegistry` resource provider is registered:
+  ```sh
+  az provider list \
+      --out table \
+      --query "[].{Provider:namespace, Status:registrationState}"
+
+  # register the resource provider if it is not registered
+  az provider register --namespace Microsoft.ContainerRegistry
+
+  # watch the registration status
+  az provider show -n Microsoft.ContainerRegistry --output table
+
+  # list resource types in the resource provider
+  az provider show \
+      --namespace Microsoft.ContainerRegistry \
+      --out table \
+      --query "resourceTypes[*].resourceType"
+  ```
+
+
 
 #### Set Up Environment
 
@@ -88,11 +109,27 @@
   ```
 
 #### Deploy the Web App
-- Deploy the application to `Azure App Service`, integrate it into the Virtual Network, enable logging and system-assigned identity, and grant it access to the Key Vault secrets:
+Deploy the application to the `Azure App Service`, integrate it into the Virtual Network, enable logging and system-assigned identity, and grant it access to the Key Vault secrets.
 
-  ```sh
-  task deploy-webapp
-  ```
+The Web App can be deployed in two artifact format:
+
+- Custom Container
+
+  - Configure `Azure Container Registry` for the Web App to pull the `OCI image`:
+    ```sh
+    task setup-acr
+    ```
+
+  - Deploy the `Web App` to `Azure App Service`:
+    ```sh
+    task deploy-webapp-oci
+    ```
+
+- Jar
+  - Deploy the `Web App` to `Azure App Service`:
+    ```sh
+      task deploy-webapp-jar
+      ```
 
 #### Clean Up Resources
 - Clean up all resources created for the Web App by removing local task files, and deleting the Azure Resource Group and Key Vault safely:

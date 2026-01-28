@@ -3,9 +3,25 @@
 version: "3"
 
 vars:
+  # Task Configurations Root Path
   TASK_ROOT: ".task"
 
+  # Task Configuration Variables Path
   TASK_VARS: "{{.TASK_ROOT}}/vars"
+
+  # Name of the Product
+  PRODUCT_NAME: ""
+
+  # Version of the Product
+  PRODUCT_VERSION: ""
+
+  # Commit Hash
+  COMMIT_HASH:
+    sh: git rev-parse HEAD
+
+  # PRODUCT_NAME + PRODUCT_VERSION + COMMIT_HASH
+  OCI_IMAGE:
+    sh: echo "{{.PRODUCT_NAME}}:{{.PRODUCT_VERSION}}-{{.COMMIT_HASH}}"
 
   # Location
   AZ_LOCATION: ""
@@ -15,6 +31,9 @@ vars:
 
   # Web App
   AZ_WEBAPP: ""
+
+  # App Service Plan
+  AZ_APPSERVICE_PLAN: ""
 
   # Key Vault
   AZ_KV: ""
@@ -65,6 +84,9 @@ vars:
   # Posgtres DB url key
   AZ_PG_DB_URL_KEY: ""
 
+  # Container Registry
+  AZ_ACR: ""
+
 dotenv: [".env"]
 
 tasks:
@@ -75,7 +97,8 @@ tasks:
       - task: setup-network
       - task: setup-pg
       - task: setup-kv
-      - task: deploy-webapp
+      - task: setup-acr
+      - task: deploy-webapp-container
     silent: true
 
   clean-up:
@@ -146,14 +169,6 @@ tasks:
             --address-prefixes 10.2.4.0/27 \
             --delegations Microsoft.Web/serverFarms
 
-      # verify the Subnet creation
-      - |
-        az network vnet subnet list \
-            --resource-group "{{.AZ_RG}}"  \
-            --vnet-name "{{.AZ_VNET}}" \
-            --output table \
-            --query "[].name"
-
   setup-pg:
     desc: Set Up a Postgres Flexible Server
     cmds:
@@ -163,13 +178,6 @@ tasks:
             --name "{{.AZ_PDNS_ZONE_PG}}" \
             --resource-group "{{.AZ_RG}}"
 
-      # verify the Private DNS Zone creation
-      - |
-        az network private-dns zone list \
-            --resource-group "{{.AZ_RG}}" \
-            --output table \
-            --query "[].name"
-
       # link the Postgres Private DNS Zone to the Virtual Network
       - |
         az network private-dns link vnet create \
@@ -178,14 +186,6 @@ tasks:
             --zone-name "{{.AZ_PDNS_ZONE_PG}}" \
             --virtual-network "{{.AZ_VNET}}" \
             --registration-enabled false
-
-      # verify the Private Link creation
-      - |
-        az network private-dns link vnet list \
-            --resource-group "{{.AZ_RG}}" \
-            --zone-name "{{.AZ_PDNS_ZONE_PG}}" \
-            --output table \
-            --query "[].name"
 
       # create an Azure Database for PostgreSQL flexible server instance
       - |
@@ -210,14 +210,6 @@ tasks:
             --subnet "{{.AZ_SUBNET_PG}}" \
             --private-dns-zone "{{.AZ_PDNS_ZONE_PG}}"
 
-      # verify the created Posgtres server instance
-      - |
-        az postgres flexible-server show \
-            --name "{{.AZ_PG_FLEX}}" \
-            --resource-group "{{.AZ_RG}}" \
-            --output table \
-            --query "name"
-
   setup-kv:
     desc: Set Up a Key Vault
     cmds:
@@ -229,13 +221,6 @@ tasks:
             --public-network-access Enabled \
             --default-action deny
 
-      # verify the Key Vault creation
-      - |
-        az keyvault list \
-            --resource-group "{{.AZ_RG}}" \
-            --output table \
-            --query "[].name"
-
       # write Keyvault ID to vars
       - az keyvault show --name "{{.AZ_KV}}" --query id -o tsv > "{{.TASK_VARS}}/AZ_KV_ID"
 
@@ -246,26 +231,12 @@ tasks:
           --resource-group "{{.AZ_RG}}" \
           --ip-address "$(curl ifconfig.me)"
 
-      # verify the added Network Rule
-      - |
-        az keyvault network-rule list \
-            --name "{{.AZ_KV}}" \
-            --resource-group "{{.AZ_RG}}" \
-            --query "ipRules" \
-            --output table
-
       # assign Key Vault Secrets Officer role to the current user to allow managing secrets
       - |
         az role assignment create \
             --assignee "$(cat {{.TASK_VARS}}/AZ_USER_ID)" \
             --role "Key Vault Secrets Officer" \
             --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)"
-
-      # verify the Role assignment
-      - |
-        az role assignment list \
-            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)" \
-            --output table
 
       # set Postgres username to the Key Vault
       - |
@@ -300,12 +271,6 @@ tasks:
             --name "{{.AZ_PG_DB_URL_KEY}}" \
             --value "$(cat {{.TASK_VARS}}/AZ_PG_DB_URL_VAL)"
 
-      # list and verify secrets
-      - |
-        az keyvault secret list \
-            --vault-name "{{.AZ_KV}}" \
-            --output table
-
       # disable public access
       - |
         az keyvault update \
@@ -320,24 +285,11 @@ tasks:
             --resource-group "{{.AZ_RG}}" \
             --ip-address $(curl ifconfig.me)
 
-      # verify the "publicNetworkAccess" and "ipRules" fields in output
-      - |
-        az keyvault show \
-            --name "{{.AZ_KV}}" \
-            --resource-group "{{.AZ_RG}}"
-
       # create a Private DNS Zone for Key Vault
       - |
         az network private-dns zone create \
             --name "{{.AZ_PDNS_ZONE_KV}}" \
             --resource-group "{{.AZ_RG}}"
-
-      # verify the Private DNS Zone creation
-      - |
-        az network private-dns zone list \
-            --resource-group "{{.AZ_RG}}" \
-            --output table \
-            --query "[].name"
 
       # write Key Vault Private DNS Zone ID to vars
       - |
@@ -355,14 +307,6 @@ tasks:
             --virtual-network "{{ .AZ_VNET}}" \
             --registration-enabled false
 
-      # verify the Private Link creation
-      - |
-        az network private-dns link vnet list \
-            --resource-group "{{ .AZ_RG}}" \
-            --zone-name "{{ .AZ_PDNS_ZONE_KV}}" \
-            --output table \
-            --query "[].name"
-
       # create a Private Endpoint for accessing the Key Vault
       - |
         az network private-endpoint create \
@@ -374,12 +318,6 @@ tasks:
             --connection-name "{{.AZ_PE_CONNECTION_KV}}" \
             --resource-group "{{.AZ_RG}}"
 
-      # verify the Private Endpoint creation
-      - |
-        az network private-endpoint list \
-            --resource-group "{{.AZ_RG}}" \
-            --output table
-
       # associate the Private Endpoint with the Private DNS Zone
       - |
         az network private-endpoint dns-zone-group create \
@@ -388,13 +326,6 @@ tasks:
             --name "{{.AZ_PE_DNS_ZG_KV}}" \
             --private-dns-zone "$(cat {{.TASK_VARS}}/AZ_PDNS_ZONE_KV_ID)" \
             --zone-name "{{.AZ_PDNS_ZONE_KV}}"
-
-      # verify the Private Endpoint DNS Zone Group creation
-      - |
-        az network private-endpoint dns-zone-group list \
-            --endpoint-name "{{.AZ_PE_KV}}" \
-            --resource-group "{{.AZ_RG}}" \
-            --output table
 
     vars:
       AZ_FQDN_PG:
@@ -406,8 +337,152 @@ tasks:
             --output tsv \
             --query fullyQualifiedDomainName
 
-  deploy-webapp:
-    desc: Deploy the app to the Azure App Service
+  setup-acr:
+    desc: Set Up a Azure Container Registry
+    cmds:
+      # create a Azure Container Registry
+      - |
+        az acr create \
+          --name "{{.AZ_ACR}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --role-assignment-mode 'rbac-abac' \
+          --dnl-scope 'SubscriptionReuse' \
+          --sku 'Basic'
+
+      # write the Azure Container Registry ID to vars
+      - |
+        az acr show \
+          --name "{{.AZ_ACR}}" \
+          --query id -o tsv > "{{.TASK_VARS}}/AZ_ACR_ID"
+
+      # assign the 'Container Registry Repository Writer' role to the current user to allow pushing images
+      - |
+        az role assignment create \
+          --assignee "$(cat {{.TASK_VARS}}/AZ_USER_ID)" \
+          --role 'Container Registry Repository Writer' \
+          --scope "$(cat {{.TASK_VARS}}/AZ_ACR_ID)"
+
+      # login to the Azure Container Registry
+      - az acr login --name "{{.AZ_ACR}}"
+
+      # write the Azure Container Registry path to vars
+      - |
+        az acr show \
+          --name "{{.AZ_ACR}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --output tsv \
+          --query loginServer > "{{.TASK_VARS}}/AZ_ACR_REGISTRY"
+
+      # write the Azure Container Registry path to vars
+      - |
+        echo "$(cat {{.TASK_VARS}}/AZ_ACR_REGISTRY)/flight-service:0.8.1-{{.COMMIT_HASH}}" \
+          > "{{.TASK_VARS}}/OCI_IMAGE_NAME"
+
+      # build a Docker Image
+      - docker build -t "$(cat {{.TASK_VARS}}/OCI_IMAGE_NAME)" .
+
+      # push the Docker Image to the registry
+      - docker push "$(cat {{.TASK_VARS}}/OCI_IMAGE_NAME)"
+
+  deploy-webapp-container:
+    desc: Deploy the oci container to the Azure App Service
+    cmds:
+      # create an Azure App Service Plan
+      - |
+        az appservice plan create \
+          --name "{{.AZ_APPSERVICE_PLAN}}" \
+          --subscription "$(cat {{.TASK_VARS}}/AZ_SUBSCRIPTION_ID)" \
+          --resource-group "{{.AZ_RG}}" \
+          --location "{{.AZ_LOCATION}}" \
+          --is-linux \
+          --sku 'B1'
+
+      # create an Web App
+      - |
+        az webapp create \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --plan "{{.AZ_APPSERVICE_PLAN}}" \
+          --container-image-name "$(cat {{.TASK_VARS}}/OCI_IMAGE_NAME)"
+
+      # set environment variables for the Web App
+      - |
+        az webapp config appsettings set \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --settings WEBSITES_PORT='8001' \
+              ACTIVE_PROFILE='azure' \
+              AZ_KV="{{.AZ_KV}}" \
+              AZ_KV_URI="{{.AZ_KV_URI}}" \
+              AZ_PG_USR="$(printf '${%s}' {{.AZ_PG_USR_KEY}})" \
+              AZ_PG_PWD="$(printf '${%s}' {{.AZ_PG_PWD_KEY}})" \
+              AZ_PG_DB_URL="$(printf '${%s}' {{.AZ_PG_DB_URL_KEY}})"
+
+      # integrate the Web App into the VNET
+      - |
+        az webapp vnet-integration add \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --vnet "{{.AZ_VNET}}" \
+          --subnet "{{.AZ_SUBNET_WEBAPP}}"
+
+      # configure logging to filesystem
+      - |
+        az webapp log config \
+          --docker-container-logging filesystem \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --level information
+
+      # enable system-assigned identity for the Web App
+      - |
+        az webapp identity assign \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}"
+
+      # configure the Web App to use the managed identity to pull the OCI image
+      - |
+        az webapp config set \
+          --name "{{.AZ_WEBAPP}}" \
+          --resource-group "{{.AZ_RG}}" \
+          --generic-configurations '{"acrUseManagedIdentityCreds": true}'
+
+      # write Web App System Identity ID to vars
+      - |
+        az webapp identity show \
+          --resource-group "{{.AZ_RG}}" \
+          --name "{{.AZ_WEBAPP}}" \
+          --query principalId -o tsv > "{{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID"
+
+      - |
+        az role assignment create \
+          --assignee "$(cat {{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID)" \
+          --role 'Container Registry Repository Reader' \
+          --scope "$(cat {{.TASK_VARS}}/AZ_ACR_ID)"
+
+      # assign the Key Vault Secrets User role to the system-assigned identity
+      - |
+        az role assignment create \
+          --role 'Key Vault Secrets User' \
+          --assignee "$(cat {{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID)" \
+          --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)"
+
+      # restart the Web App
+      - az webapp restart --name "{{.AZ_WEBAPP}}" --resource-group "{{.AZ_RG}}"
+
+      # stream the Web App logs
+      - az webapp log tail --name "{{.AZ_WEBAPP}}" --resource-group "{{.AZ_RG}}"
+    vars:
+      AZ_KV_URI:
+        sh: |
+          az keyvault show \
+            --name "{{.AZ_KV}}" \
+            --resource-group "{{.AZ_RG}}" \
+            --output tsv \
+            --query "properties.vaultUri"
+
+  deploy-webapp-jar:
+    desc: Deploy the app jar artifact to the Azure App Service
     cmds:
       - |
         gradle clean azureWebAppDeploy \
@@ -443,18 +518,11 @@ tasks:
             --name "{{.AZ_WEBAPP}}" \
             --resource-group "{{.AZ_RG}}"
 
-      # verify enabled system-assigned identity
-      - |
-        az webapp identity show \
-            --name "{{.AZ_WEBAPP}}" \
-            --resource-group "{{.AZ_RG}}"
-
       # write Web App System Identity ID to vars
-      - |
-        az webapp identity show \
-            --resource-group "{{.AZ_RG}}" \
-            --name "{{.AZ_WEBAPP}}" \
-            --query principalId -o tsv > "{{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID"
+      - az webapp identity show \
+        --resource-group "{{.AZ_RG}}" \
+        --name "{{.AZ_WEBAPP}}" \
+        --query principalId -o tsv > "{{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID"
 
       # assign the Key Vault Secrets User role to the system-assigned identity
       - |
@@ -462,13 +530,6 @@ tasks:
             --role "Key Vault Secrets User" \
             --assignee "$(cat {{.TASK_VARS}}/AZ_WEBAPP_SYSTEM_IDENTITY_ID)" \
             --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)"
-
-      # verify the Role assignment
-      - |
-        az role assignment list \
-            --scope "$(cat {{.TASK_VARS}}/AZ_KV_ID)" \
-            --output table \
-            --query "[].roleDefinitionName"
 
       # restart the Web App
       - az webapp restart --name "{{.AZ_WEBAPP}}" --resource-group "{{.AZ_RG}}"
