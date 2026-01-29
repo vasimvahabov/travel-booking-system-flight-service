@@ -2,8 +2,8 @@ name: Commit Stage
 on: push
 
 env:
+  PRODUCT_VERSION: 0.8.1-${{ github.sha }}-${{ github.run_id }}
   REGISTRY: ghcr.io
-  IMAGE_VERSION_FLIGHT_SERVICE: 0.8.1-${{ github.sha }}
   IMAGE_NAME_FLIGHT_SERVICE: ghcr.io/vasimvahabov/flight-service
 
 jobs:
@@ -30,14 +30,14 @@ jobs:
           fail-build: true
           severity-cutoff: high
       - name: Upload the vulnerability report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x gradlew
       - name: Build, unit tests and integration tests
-        run: |
-          chmod +x gradlew
-          ./gradlew setupKeycloakTestResources build
+        run: ./gradlew setupKeycloakTestResources build
   package:
     name: Package and Publish
     runs-on: ubuntu-22.04
@@ -64,20 +64,21 @@ jobs:
       #     export-variables: true
       #     ensure-exists: true
       #     keys-case: 'upper'
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x gradlew
       - name: Build the container image
         run: |
-          chmod +x gradlew
           ./gradlew bootBuildImage \
-          -Pversion=$IMAGE_VERSION_FLIGHT_SERVICE
+              -Pversion=${{ env.PRODUCT_VERSION }}
       - name: Scan OCI the image vulnerability
         uses: anchore/scan-action@v4
         id: scan
         with:
-          image: ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
+          image: ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.PRODUCT_VERSION }}
           fail-build: false
           severity-cutoff: high
       - name: Upload the vulnerability report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
@@ -88,10 +89,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish the container image (Git Commit Hash)
-        run: docker push ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }}
+        run: docker push ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.PRODUCT_VERSION }}
       - name: Publish the container image (latest)
         run: |
           docker tag \
-              ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.IMAGE_VERSION_FLIGHT_SERVICE }} \
+              ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:${{ env.PRODUCT_VERSION }} \
               ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:latest
           docker push ${{ env.IMAGE_NAME_FLIGHT_SERVICE }}:latest
